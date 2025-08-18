@@ -19,7 +19,7 @@ public class MiMi {
     }
 
     public static void main(String[] args) {
-        List<TaskDone> tasks = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
 
         sayhi();
         Scanner sc = new Scanner(System.in);
@@ -35,15 +35,14 @@ public class MiMi {
                 System.out.println(LINE);
                 System.out.println(" Here are the tasks in your list:");
                 for (int i = 0; i < tasks.size(); i++) {
-                    TaskDone t = tasks.get(i);
-                    System.out.println(" " + (i + 1) + ".[" + t.getStatusIcon() + "] " + t.getDescription());
+                    System.out.println(" " + (i + 1) + "." + tasks.get(i));
                 }
                 System.out.println(LINE);
 
             } else if (cmd.startsWith("mark ")) {
                 int idx = parseIndex(cmd.substring(5));
                 if (isValidIndex(idx, tasks.size())) {
-                    TaskDone t = tasks.get(idx - 1);
+                    Task t = tasks.get(idx - 1);
                     t.mark();
                     System.out.println(LINE);
                     System.out.println(" Nice! I've marked this task as done:");
@@ -56,7 +55,7 @@ public class MiMi {
             } else if (cmd.startsWith("unmark ")) {
                 int idx = parseIndex(cmd.substring(7));
                 if (isValidIndex(idx, tasks.size())) {
-                    TaskDone t = tasks.get(idx - 1);
+                    Task t = tasks.get(idx - 1);
                     t.unmark();
                     System.out.println(LINE);
                     System.out.println(" OK, I've marked this task as not done yet:");
@@ -67,13 +66,75 @@ public class MiMi {
                 }
 
             } else {
-                tasks.add(new TaskDone(input));
-                System.out.println(LINE);
-                System.out.println(" added: " + input);
-                System.out.println(LINE);
+                String s = input.length() >= 5 ? input.substring(5).trim() : "";
+                if (cmd.startsWith("todo")) {
+                    if (s.isEmpty()) {
+                        printSimpleError(" The description of a todo cannot be empty.");
+                    } else {
+                        Task t = new Todo(s);
+                        tasks.add(t);
+                        printAdded(t, tasks.size());
+                    }
+    
+                } else if (cmd.startsWith("deadline")) {
+                    String rest = input.length() >= 9 ? input.substring(9).trim() : "";
+                    int p = rest.indexOf("/by");
+                    if (p == -1) {
+                        printSimpleError(" Please provide '/by <deadline>' (e.g., deadline return book /by Sunday).");
+                    } else {
+                        String desc = rest.substring(0, p).trim();
+                        String by = rest.substring(p + 3).trim();
+                        if (desc.isEmpty() || by.isEmpty()) {
+                            printSimpleError(" Please provide both description and '/by ...'.");
+                        } else {
+                            Task t = new Deadline(desc, by);
+                            tasks.add(t);
+                            printAdded(t, tasks.size());
+                        }
+                    }
+    
+                } else if (cmd.startsWith("event")) {
+                    int pf = s.indexOf("/from");
+                    int pt = (pf == -1) ? -1 : s.indexOf("/to", pf + 5);
+    
+                    if (pf == -1 || pt == -1) {
+                        printSimpleError(" Please provide '/from ... /to ...' (e.g., event meeting /from Mon 2pm /to 4pm).");
+                    } else {
+                        String desc = s.substring(0, pf).trim();
+                        String from = s.substring(pf + 5, pt).trim();
+                        String to = s.substring(pt + 3).trim();
+                        if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
+                            printSimpleError(" Please provide description, '/from ...', and '/to ...'.");
+                        } else {
+                            Task t = new Event(desc, from, to);
+                            tasks.add(t);
+                            printAdded(t, tasks.size());
+                        }
+                    }
+    
+                } else {
+                    Task t = new Todo(input);
+                    tasks.add(t);
+                    printAdded(t, tasks.size());
+                }
             }
         }
         sc.close();
+    }
+
+    // ---------- helpers ----------
+    private static void printAdded(Task t, int total) {
+        System.out.println(LINE);
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("  " + t);
+        System.out.println(" Now you have " + total + " tasks in the list.");
+        System.out.println(LINE);
+    }
+
+    private static void printSimpleError(String msg) {
+        System.out.println(LINE);
+        System.out.println(msg);
+        System.out.println(LINE);
     }
 
     private static int parseIndex(String s) {

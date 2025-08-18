@@ -1,8 +1,8 @@
-public class TaskDone {
+public class Task {
     protected String description;
     protected boolean isDone;
 
-    public TaskDone(String description) {
+    public Task(String description) {
         this.description = description;
         this.isDone = false;
     }
@@ -25,7 +25,6 @@ public class TaskDone {
 
     @Override
     public String toString() {
-        // e.g. "[X] read book"
         return "[" + getStatusIcon() + "] " + description;
     }
 }
