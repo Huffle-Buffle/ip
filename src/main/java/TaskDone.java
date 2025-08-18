@@ -25,7 +25,6 @@ public class TaskDone {
 
     @Override
     public String toString() {
-        // e.g. "[X] read book"
         return "[" + getStatusIcon() + "] " + description;
     }
 }
