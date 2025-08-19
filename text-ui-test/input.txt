@@ -1,0 +1,16 @@
+list
+todo read book
+todo wash car
+deadline return book /by Sunday
+event project meeting /from Mon 2pm /to 4pm
+list
+mark 2
+unmark 2
+event project meeting /from Thurs 10am /to 12pm
+todo do homework
+deadline do homework /by no idea :-p
+mark 3
+mark 6
+mark 4
+list
+bye

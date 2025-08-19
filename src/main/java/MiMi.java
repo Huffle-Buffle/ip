@@ -3,16 +3,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MiMi {
-    private static final String LINE = "____________________________________________________________";
+    public static final String LINE = "____________________________________________________________";
 
-    private static void sayhi() {
+    public static void sayhi() {
         System.out.println(LINE);
         System.out.println(" Hello! I'm MiMi");
         System.out.println(" What can I do for you?");
         System.out.println(LINE);
     }
 
-    private static void byebye() {
+    public static void byebye() {
         System.out.println(LINE);
         System.out.println(" Bye. Hope to see you again soon!");
         System.out.println(LINE);
@@ -25,13 +25,13 @@ public class MiMi {
         Scanner sc = new Scanner(System.in);
         while (sc.hasNextLine()) {
             String input = sc.nextLine();
-            String cmd = input.trim();
+            String user_input = input.trim();
 
-            if (cmd.equals("bye")) {
+            if (user_input.equals("bye")) {
                 byebye();
                 break;
 
-            } else if (cmd.equals("list")) {
+            } else if (user_input.equals("list")) {
                 System.out.println(LINE);
                 System.out.println(" Here are the tasks in your list:");
                 for (int i = 0; i < tasks.size(); i++) {
@@ -39,8 +39,8 @@ public class MiMi {
                 }
                 System.out.println(LINE);
 
-            } else if (cmd.startsWith("mark ")) {
-                int idx = parseIndex(cmd.substring(5));
+            } else if (user_input.startsWith("mark ")) {
+                int idx = parseIndex(user_input.substring(5));
                 if (isValidIndex(idx, tasks.size())) {
                     Task t = tasks.get(idx - 1);
                     t.mark();
@@ -52,8 +52,8 @@ public class MiMi {
                     printIndexError(tasks.size());
                 }
 
-            } else if (cmd.startsWith("unmark ")) {
-                int idx = parseIndex(cmd.substring(7));
+            } else if (user_input.startsWith("unmark ")) {
+                int idx = parseIndex(user_input.substring(7));
                 if (isValidIndex(idx, tasks.size())) {
                     Task t = tasks.get(idx - 1);
                     t.unmark();
@@ -67,7 +67,7 @@ public class MiMi {
 
             } else {
                 String s = input.length() >= 5 ? input.substring(5).trim() : "";
-                if (cmd.startsWith("todo")) {
+                if (user_input.startsWith("todo")) {
                     if (s.isEmpty()) {
                         printSimpleError(" The description of a todo cannot be empty.");
                     } else {
@@ -76,7 +76,7 @@ public class MiMi {
                         printAdded(t, tasks.size());
                     }
     
-                } else if (cmd.startsWith("deadline")) {
+                } else if (user_input.startsWith("deadline")) {
                     String rest = input.length() >= 9 ? input.substring(9).trim() : "";
                     int p = rest.indexOf("/by");
                     if (p == -1) {
@@ -93,7 +93,7 @@ public class MiMi {
                         }
                     }
     
-                } else if (cmd.startsWith("event")) {
+                } else if (user_input.startsWith("event")) {
                     int pf = s.indexOf("/from");
                     int pt = (pf == -1) ? -1 : s.indexOf("/to", pf + 5);
     
@@ -112,7 +112,7 @@ public class MiMi {
                         }
                     }
     
-                } else {
+                } else { // if user doesn't specify the type of activity, by default we set it as todo
                     Task t = new Todo(input);
                     tasks.add(t);
                     printAdded(t, tasks.size());
@@ -122,7 +122,7 @@ public class MiMi {
         sc.close();
     }
 
-    // ---------- helpers ----------
+    // These are helpers for MiMi
     private static void printAdded(Task t, int total) {
         System.out.println(LINE);
         System.out.println(" Got it. I've added this task:");
