@@ -19,7 +19,7 @@ public class MiMi {
     }
 
     public static void main(String[] args) {
-        List<Task> tasks = new ArrayList<>();
+        ArrayList<Task> tasks = new ArrayList<>();
 
         sayhi();
         Scanner sc = new Scanner(System.in);
@@ -66,7 +66,20 @@ public class MiMi {
                         printIndexError(tasks.size());
                     }
 
-                } else if (user_input.startsWith("todo")) {
+                } else if (user_input.startsWith("delete ")) {
+                    int index = parseIndex(user_input.substring(7));
+                    if (isValidIndex(index, tasks.size())) {
+                        Task deleted = tasks.remove(index - 1);
+                        System.out.println(LINE);
+                        System.out.println(" Noted. I've removed this task:");
+                        System.out.println("  " + deleted);
+                        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+                        System.out.println(LINE);
+                    } else {
+                        printIndexError(tasks.size());
+                    }
+
+                } else if (user_input.startsWith("todo")) { // handling todo stuff
                     String thingtodo = user_input.substring(4).trim();
                     if (thingtodo.isEmpty()) {
                         throw new MiMiException("How can there be nothing to do, there is always something to do!");
