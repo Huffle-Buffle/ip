@@ -1,6 +1,5 @@
 import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MiMi {
     public static final String LINE = "____________________________________________________________";
@@ -66,7 +65,7 @@ public class MiMi {
                         printIndexError(tasks.size());
                     }
 
-                } else if (user_input.startsWith("delete ")) {
+                } else if (user_input.startsWith("delete ")) { // deleteing stuff
                     int index = parseIndex(user_input.substring(7));
                     if (isValidIndex(index, tasks.size())) {
                         Task deleted = tasks.remove(index - 1);
