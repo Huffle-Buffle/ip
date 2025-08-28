@@ -2,12 +2,19 @@ package mimi;
 
 import java.util.ArrayList;
 
+/**
+ * Entry point of the MiMi chatbot.
+ * Wires UI, storage and task list, then runs a simple REPL loop.
+ */
 public class MiMi {
 
     private final UiMasterList ui;
     private final Storage storage;
     private final TaskList tasks;
 
+    /**
+     * Creates MiMi and loads tasks from disk (folder/file are created if missing).
+     */
     public MiMi() {
         this.ui = new UiMasterList();
         this.storage = new Storage("data/MiMi.txt");
@@ -15,6 +22,9 @@ public class MiMi {
         this.tasks = new TaskList(loaded);
     }
 
+    /**
+     * Runs the read–eval–print loop until the user types "bye".
+     */
     public void run() {
         ui.sayhi();
 
@@ -33,11 +43,7 @@ public class MiMi {
                         ui.byebye();
                         return;
                     }
-                    case "list" -> {
-                        ui.printLine();
-                        ui.showList(tasks);
-                        ui.printLine();
-                    }
+                    case "list" -> ui.showList(tasks);
                     case "todo" -> {
                         Todo t = new Todo(Parser.parseTodo(rest));
                         tasks.add(t);
@@ -86,7 +92,7 @@ public class MiMi {
                         ui.showRemoved(removed);
 
                     }
-                    default -> ui.showError("I don't understand that command.");
+                    default -> ui.showError("Alamak what is this?");
                 }
             } catch (MiMiException e) {
                 ui.showError(e.getMessage());
@@ -97,6 +103,11 @@ public class MiMi {
             }
         }
     }
+
+    /**
+     * Program entry point.
+     * @param args unused CLI args
+     */
     public static void main(String[] args) {
             new MiMi().run();
     }

@@ -4,9 +4,15 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
 
+/**
+ * Very small persistence helper.
+ * Saves/loads tasks to a TSV-like text file at {@code data/MiMi.txt}.
+ * Creates the folder/file if they do not exist.
+ */
 public class Save {
     private final File file = Paths.get("data", "MiMi.txt").toFile();
 
+    /** Prepares the folder/file used for saving. */
     public Save() {
         try {
             Path path = file.toPath();
@@ -19,6 +25,10 @@ public class Save {
         }
     }
 
+    /**
+     * Loads tasks from disk. Ignores header/footer lines.
+     * @return list of tasks (empty if file is missing or unreadable)
+     */
     public ArrayList<Task> load() {
         ArrayList<Task> list = new ArrayList<>();
         BufferedReader buffer = null;
@@ -47,7 +57,11 @@ public class Save {
         return list;
     }
 
-    // It is here where we format thr txt file that will be saved which is MiMi.txt
+    /**
+     * Writes the header, all tasks, and a short footer.
+     * Skips invalid/blank rows.
+     * @param list tasks to save
+     */
     public void save(ArrayList<Task> list) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, false))) {
             // header starts here btw
