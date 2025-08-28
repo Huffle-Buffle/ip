@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -17,8 +18,9 @@ public class MiMi {
         System.out.println(LINE);
     }
 
-    public static void main(String[] args) {
-        ArrayList<Task> tasks = new ArrayList<>();
+    public static void main(String[] args) throws IOException {
+        Save saver = new Save();
+        ArrayList<Task> tasks = saver.load();
 
         sayhi();
         Scanner sc = new Scanner(System.in);
@@ -106,26 +108,7 @@ public class MiMi {
                     }
 
                 } else if (user_input.startsWith("event")) { // handing my events stuff
-                    String event = user_input.length() > 5 ? user_input.substring(5).trim() : "";
-                    if (event.isEmpty()) {
-                        throw new MiMiException("What is the event??? Please provide description, '/from ...', and '/to ...'. If its a good event we should celebrate!");
-                    }
-                    int pf = event.indexOf("/from");
-                    int pt = (pf == -1) ? -1 : event.indexOf("/to", pf + 5);
-
-                    if (pf == -1 || pt == -1) {
-                        throw new MiMiException("Please provide '/from ... /to ...' (e.g., event meeting /from Mon 2pm /to 4pm).");
-                    }
-
-                    String desc = event.substring(0, pf).trim();
-                    String from = event.substring(pf + 5, pt).trim();
-                    String to = event.substring(pt + 3).trim();
-
-                    if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                        throw new MiMiException("Please provide description, '/from ...', and '/to ...'.");
-                    }
-
-                    Task t = new Event(desc, from, to);
+                    Task t = getTask(user_input);
                     tasks.add(t);
                     printAdded(t, tasks.size());
                 } else { // Catching empty or random inouts
@@ -136,8 +119,32 @@ public class MiMi {
                 System.out.println(e.getMessage());
                 System.out.println(LINE);
             }
+            saver.save(tasks);
         }
         sc.close();
+    }
+
+    private static Task getTask(String user_input) throws MiMiException {
+        String event = user_input.length() > 5 ? user_input.substring(5).trim() : "";
+        if (event.isEmpty()) {
+            throw new MiMiException("What is the event??? Please provide description, '/from ...', and '/to ...'. If its a good event we should celebrate!");
+        }
+        int pf = event.indexOf("/from");
+        int pt = (pf == -1) ? -1 : event.indexOf("/to", pf + 5);
+
+        if (pf == -1 || pt == -1) {
+            throw new MiMiException("Please provide '/from ... /to ...' (e.g., event meeting /from Mon 2pm /to 4pm).");
+        }
+
+        String desc = event.substring(0, pf).trim();
+        String from = event.substring(pf + 5, pt).trim();
+        String to = event.substring(pt + 3).trim();
+
+        if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            throw new MiMiException("Please provide description, '/from ...', and '/to ...'.");
+        }
+
+        return new Event(desc, from, to);
     }
 
     // These are helpers for MiMi
