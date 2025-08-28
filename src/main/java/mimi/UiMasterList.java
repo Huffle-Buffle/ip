@@ -1,3 +1,5 @@
+package mimi;
+
 import java.util.Scanner;
 
 public class UiMasterList {

@@ -1,3 +1,5 @@
+package mimi;
+
 public class Parser {
     public static String commandWord(String input) {
         String s = input == null ? "" : input.trim();
