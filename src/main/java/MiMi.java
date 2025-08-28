@@ -1,186 +1,101 @@
-import java.io.IOException;
-import java.util.Scanner;
 import java.util.ArrayList;
 
 public class MiMi {
-    public static final String LINE = "____________________________________________________________";
 
-    public static void sayhi() {
-        System.out.println(LINE);
-        System.out.println(" Hello! I'm MiMi");
-        System.out.println(" What can I do for you?");
-        System.out.println(LINE);
+    private final UiMasterList ui;
+    private final Storage storage;
+    private final TaskList tasks;
+
+    public MiMi() {
+        this.ui = new UiMasterList();
+        this.storage = new Storage("data/MiMi.txt");
+        ArrayList<Task> loaded = storage.load();
+        this.tasks = new TaskList(loaded);
     }
 
-    public static void byebye() {
-        System.out.println(LINE);
-        System.out.println(" Bye. Hope to see you again soon!");
-        System.out.println(LINE);
-    }
+    public void run() {
+        ui.sayhi();
 
-    public static void main(String[] args) throws IOException {
-        Save saver = new Save();
-        ArrayList<Task> tasks = saver.load();
+        while (true) {
+            String input = ui.readCommand();
+            if (input == null) input = "";
+            input = input.trim();
+            if (input.isEmpty()) continue;
 
-        sayhi();
-        Scanner sc = new Scanner(System.in);
-        while (sc.hasNextLine()) {
-            String input = sc.nextLine();
-            String user_input = input.trim();
+            String cmd = Parser.commandWord(input);
+            String rest = Parser.afterWord(input);
 
             try {
-                if (user_input.equals("bye")) {
-                    byebye();
-                    break;
-
-                } else if (user_input.equals("list")) {
-                    System.out.println(LINE);
-                    System.out.println(" Here are the tasks in your list:");
-                    for (int i = 0; i < tasks.size(); i++) {
-                        System.out.println(" " + (i + 1) + "." + tasks.get(i));
+                switch (cmd) {
+                    case "bye" -> {
+                        ui.byebye();
+                        return;
                     }
-                    System.out.println(LINE);
-
-                } else if (user_input.startsWith("mark ")) {
-                    int index = parseIndex(user_input.substring(5));
-                    if (isValidIndex(index, tasks.size())) {
-                        Task t = tasks.get(index - 1);
-                        t.mark();
-                        System.out.println(LINE);
-                        System.out.println(" Nice! I've marked this task as done:");
-                        System.out.println("  " + t);
-                        System.out.println(LINE);
-                    } else {
-                        printIndexError(tasks.size());
+                    case "list" -> {
+                        ui.printLine();
+                        ui.showList(tasks);
+                        ui.printLine();
                     }
-
-                } else if (user_input.startsWith("unmark ")) {
-                    int index = parseIndex(user_input.substring(7));
-                    if (isValidIndex(index, tasks.size())) {
-                        Task t = tasks.get(index - 1);
-                        t.unmark();
-                        System.out.println(LINE);
-                        System.out.println(" OK, I've marked this task as not done yet:");
-                        System.out.println("  " + t);
-                        System.out.println(LINE);
-                    } else {
-                        printIndexError(tasks.size());
-                    }
-
-                } else if (user_input.startsWith("delete ")) { // deleteing stuff
-                    int index = parseIndex(user_input.substring(7));
-                    if (isValidIndex(index, tasks.size())) {
-                        Task deleted = tasks.remove(index - 1);
-                        System.out.println(LINE);
-                        System.out.println(" Noted. I've removed this task:");
-                        System.out.println("  " + deleted);
-                        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
-                        System.out.println(LINE);
-                    } else {
-                        printIndexError(tasks.size());
-                    }
-
-                } else if (user_input.startsWith("todo")) { // handling todo stuff
-                    String thingtodo = user_input.substring(4).trim();
-                    if (thingtodo.isEmpty()) {
-                        throw new MiMiException("How can there be nothing to do, there is always something to do!");
-                    } else {
-                        Task t = new Todo(thingtodo);
+                    case "todo" -> {
+                        Todo t = new Todo(Parser.parseTodo(rest));
                         tasks.add(t);
-                        printAdded(t, tasks.size());
-                    }
+                        storage.save(tasks.asArrayList());
+                        ui.showAdded(t);
 
-                } else if (user_input.startsWith("deadline")) { // handling deadline stuff
-                    String deadline = input.length() >= 9 ? input.substring(9).trim() : "";
-                    int afterby = deadline.indexOf("/by");
-                    if (deadline.isEmpty()) {
-                        throw new MiMiException("Chop chop what's the deadline? Please provide '/by <deadline>' (e.g., deadline return book /by Sunday).");
-                    } else {
-                        String desc = deadline.substring(0, afterby).trim();
-                        String by = deadline.substring(afterby + 3).trim();
-                        if (desc.isEmpty() || by.isEmpty()) {
-                            printSimpleError();
-                        } else {
-                            Task t = new Deadline(desc, by);
-                            tasks.add(t);
-                            printAdded(t, tasks.size());
-                        }
                     }
+                    case "deadline" -> {
+                        String[] a = Parser.parseDeadline(rest);    // [desc, when]
 
-                } else if (user_input.startsWith("event")) { // handing my events stuff
-                    Task t = getTask(user_input);
-                    tasks.add(t);
-                    printAdded(t, tasks.size());
-                } else { // Catching empty or random inouts
-                    throw new MiMiException("Alamak, what is this ?");
+                        Deadline d = new Deadline(a[0], a[1]);      // Level-8 pretty-print if yyyy-MM-dd
+
+                        tasks.add(d);
+                        storage.save(tasks.asArrayList());
+                        ui.showAdded(d);
+
+                    }
+                    case "event" -> {
+                        String[] a = Parser.parseEvent(rest);       // [desc, from, to]
+
+                        Event ev = new Event(a[0], a[1], a[2]);
+                        tasks.add(ev);
+                        storage.save(tasks.asArrayList());
+                        ui.showAdded(ev);
+
+                    }
+                    case "mark" -> {
+                        int idx = Parser.parseIndex(rest);          // 1-based -> 0-based
+
+                        Task t = tasks.mark(idx);
+                        storage.save(tasks.asArrayList());
+                        ui.showMarked(t);
+
+                    }
+                    case "unmark" -> {
+                        int idx = Parser.parseIndex(rest);
+                        Task t = tasks.unmark(idx);
+                        storage.save(tasks.asArrayList());
+                        ui.showUnmarked(t);
+
+                    }
+                    case "delete" -> {
+                        int idx = Parser.parseIndex(rest);
+                        Task removed = tasks.remove(idx);
+                        storage.save(tasks.asArrayList());
+                        ui.showRemoved(removed);
+
+                    }
+                    default -> ui.showError("I don't understand that command.");
                 }
             } catch (MiMiException e) {
-                System.out.println(LINE);
-                System.out.println(e.getMessage());
-                System.out.println(LINE);
+                ui.showError(e.getMessage());
+            } catch (IndexOutOfBoundsException e) {
+                ui.showError("Please provide a valid task number.");
+            } catch (Exception e) {
+                ui.showError("Something went wrong: " + e.getMessage());
             }
-            saver.save(tasks);
-        }
-        sc.close();
-    }
-
-    private static Task getTask(String user_input) throws MiMiException {
-        String event = user_input.length() > 5 ? user_input.substring(5).trim() : "";
-        if (event.isEmpty()) {
-            throw new MiMiException("What is the event??? Please provide description, '/from ...', and '/to ...'. If its a good event we should celebrate!");
-        }
-        int pf = event.indexOf("/from");
-        int pt = (pf == -1) ? -1 : event.indexOf("/to", pf + 5);
-
-        if (pf == -1 || pt == -1) {
-            throw new MiMiException("Please provide '/from ... /to ...' (e.g., event meeting /from Mon 2pm /to 4pm).");
-        }
-
-        String desc = event.substring(0, pf).trim();
-        String from = event.substring(pf + 5, pt).trim();
-        String to = event.substring(pt + 3).trim();
-
-        if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            throw new MiMiException("Please provide description, '/from ...', and '/to ...'.");
-        }
-
-        return new Event(desc, from, to);
-    }
-
-    // These are helpers for MiMi
-    private static void printAdded(Task t, int total) {
-        System.out.println(LINE);
-        System.out.println(" Got it. I've added this task:");
-        System.out.println("  " + t);
-        System.out.println(" Now you have " + total + " tasks in the list.");
-        System.out.println(LINE);
-    }
-
-    private static void printSimpleError() {
-        System.out.println(LINE);
-        System.out.println(" Please provide both description and '/by ...'.");
-        System.out.println(LINE);
-    }
-
-    private static int parseIndex(String s) {
-        try {
-            return Integer.parseInt(s.trim());
-        } catch (NumberFormatException e) {
-            return -1;
         }
     }
-
-    private static boolean isValidIndex(int idx, int size) {
-        return idx >= 1 && idx <= size;
-    }
-
-    private static void printIndexError(int size) {
-        System.out.println(LINE);
-        if (size == 0) {
-            System.out.println(" Your list is empty.");
-        } else {
-            System.out.println(" Please provide a valid task number between 1 and " + size + ".");
-        }
-        System.out.println(LINE);
+    public static void main(String[] args) {
+            new MiMi().run();
     }
 }
