@@ -24,7 +24,7 @@ public class Parser {
     public static String parseTodo(String rest) throws MiMiException {
         String desc = (rest == null) ? "" : rest.trim();
         if (desc.isEmpty()) {
-            throw new MiMiException("The description of a todo cannot be empty.");
+            throw new MiMiException("How can there be nothing to do, there is always something to do!");
         }
         return desc;
     }
@@ -35,7 +35,7 @@ public class Parser {
         String desc = rest.substring(0, pos).trim();
         String when = rest.substring(pos + 3).trim(); // after '/by'
         if (desc.isEmpty() || when.isEmpty())
-            throw new MiMiException("Deadline needs description and /by <date>.");
+            throw new MiMiException("Chop chop what's the deadline? Please provide '/by <deadline>' (e.g., deadline return book /by Sunday)");
         return new String[]{desc, when};
     }
 
@@ -52,7 +52,7 @@ public class Parser {
                 to = afterFrom.substring(t + 3).trim();
             }
         }
-        if (desc.isEmpty()) throw new MiMiException("Event needs a description.");
+        if (desc.isEmpty()) throw new MiMiException("What is the event??? Please provide description, '/from ...', and '/to ...'. If its a good event we should celebrate!");
         return new String[]{desc, from, to};
     }
 }
