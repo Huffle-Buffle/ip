@@ -35,7 +35,7 @@ public class MiMi {
             if (input.isEmpty()) continue;
 
             String cmd = Parser.commandWord(input);
-            String rest = Parser.afterWord(input);
+            String keyword = Parser.afterWord(input);
 
             try {
                 switch (cmd) {
@@ -45,14 +45,14 @@ public class MiMi {
                     }
                     case "list" -> ui.showList(tasks);
                     case "todo" -> {
-                        Todo t = new Todo(Parser.parseTodo(rest));
+                        Todo t = new Todo(Parser.parseTodo(keyword));
                         tasks.add(t);
                         storage.save(tasks.asArrayList());
                         ui.showAdded(t);
 
                     }
                     case "deadline" -> {
-                        String[] a = Parser.parseDeadline(rest);    // [desc, when]
+                        String[] a = Parser.parseDeadline(keyword);    // [desc, when]
 
                         Deadline d = new Deadline(a[0], a[1]);      // Level-8 pretty-print if yyyy-MM-dd
 
@@ -62,7 +62,7 @@ public class MiMi {
 
                     }
                     case "event" -> {
-                        String[] a = Parser.parseEvent(rest);       // [desc, from, to]
+                        String[] a = Parser.parseEvent(keyword);       // [desc, from, to]
 
                         Event ev = new Event(a[0], a[1], a[2]);
                         tasks.add(ev);
@@ -71,7 +71,7 @@ public class MiMi {
 
                     }
                     case "mark" -> {
-                        int idx = Parser.parseIndex(rest);          // 1-based -> 0-based
+                        int idx = Parser.parseIndex(keyword);          // 1-based -> 0-based
 
                         Task t = tasks.mark(idx);
                         storage.save(tasks.asArrayList());
@@ -79,19 +79,27 @@ public class MiMi {
 
                     }
                     case "unmark" -> {
-                        int idx = Parser.parseIndex(rest);
+                        int idx = Parser.parseIndex(keyword);
                         Task t = tasks.unmark(idx);
                         storage.save(tasks.asArrayList());
                         ui.showUnmarked(t);
 
                     }
                     case "delete" -> {
-                        int idx = Parser.parseIndex(rest);
+                        int idx = Parser.parseIndex(keyword);
                         Task removed = tasks.remove(idx);
                         storage.save(tasks.asArrayList());
                         ui.showRemoved(removed);
 
                     }
+                case "find" -> {
+                    if (keyword.isEmpty()) {
+                        ui.showError("Please provide a keyword: find <word>");
+                    } else {
+                        var matches = tasks.find(keyword);
+                        ui.showFind(matches);
+                    }
+                }
                     default -> ui.showError("Alamak what is this?");
                 }
             } catch (MiMiException e) {
