@@ -52,9 +52,9 @@ public class MiMi {
 
                     }
                     case "deadline" -> {
-                        String[] a = Parser.parseDeadline(keyword);    // [desc, when]
+                        String[] a = Parser.parseDeadline(keyword);
 
-                        Deadline d = new Deadline(a[0], a[1]);      // Level-8 pretty-print if yyyy-MM-dd
+                        Deadline d = new Deadline(a[0], a[1]);
 
                         tasks.add(d);
                         storage.save(tasks.asArrayList());
@@ -62,7 +62,7 @@ public class MiMi {
 
                     }
                     case "event" -> {
-                        String[] a = Parser.parseEvent(keyword);       // [desc, from, to]
+                        String[] a = Parser.parseEvent(keyword);
 
                         Event ev = new Event(a[0], a[1], a[2]);
                         tasks.add(ev);
@@ -71,7 +71,7 @@ public class MiMi {
 
                     }
                     case "mark" -> {
-                        int idx = Parser.parseIndex(keyword);          // 1-based -> 0-based
+                        int idx = Parser.parseIndex(keyword);
 
                         Task t = tasks.mark(idx);
                         storage.save(tasks.asArrayList());

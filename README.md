@@ -24,3 +24,9 @@ Prerequisites: JDK 17, update Intellij to the most recent version.
    ```
 
 **Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+
+## AI Usage Declaration! 
+## Date: 29 August 2025
+I(Megane Wong) used ChatGPT 5 to mostly assist with generating the Javadoc comments, commit messages from Level-7 up to A-Gradle were generated but now are all self written to meet the Git Standard.
+I also used ChatGPT to help me generate the tests in JUnit Tests as I wanted the AI to get creative with the possible inputs as if I were to test it I would put inputs that I am sure would pass hence I used the AI to ensure it catches possible failed cases.
+Lastly, I used it to assist me in correcting my mistakes as I was having some issues figuring out how to structure the Find feature at Level 9. 
