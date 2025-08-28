@@ -1,41 +1,29 @@
 plugins {
     id 'java'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'   // keep for Gradle 7.x
 }
 
-repositories {
-    mavenCentral()
-}
+repositories { mavenCentral() }
 
 dependencies {
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.0'
-    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.10.0'
-}
-
-test {
-    useJUnitPlatform()
-
-    testLogging {
-        events "passed", "skipped", "failed"
-
-        showExceptions true
-        exceptionFormat "full"
-        showCauses true
-        showStackTraces true
-        showStandardStreams = false
-    }
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly   'org.junit.jupiter:junit-jupiter-engine:5.10.0'
 }
 
 application {
-    mainClass.set("seedu.duke.Duke")
+    mainClass.set("mimi.MiMi")
 }
 
+run { standardInput = System.in }
+
 shadowJar {
-    archiveBaseName = "duke"
+    archiveBaseName = "mimi"
     archiveClassifier = null
 }
 
-run{
-    standardInput = System.in
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }  // you’re on JDK 17
 }
+
+//test { useJUnitPlatform() }
