@@ -2,10 +2,6 @@ import java.util.Scanner;
 
 public class UiMasterList {
 
-    public static final String LINE = "____________________________________________________________";
-
-    public void printLine() { System.out.println(LINE); }
-
     private final Scanner sc = new Scanner(System.in);
 
     public void sayhi() { System.out.println("Hello! I'm MiMi \n What can I do for you?"); }
