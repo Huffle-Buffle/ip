@@ -1,3 +1,5 @@
+package mimi;
+
 import java.util.ArrayList;
 
 public class MiMi {
