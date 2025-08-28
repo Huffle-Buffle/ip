@@ -1,18 +1,38 @@
 package mimi;
 
+/**
+ * Stateless helpers that parse user input into command parts.
+ * Throws {@link MiMiException} for malformed input.
+ */
 public class Parser {
+    /**
+     * Returns the first word (command) from the input.
+     * @param input full user input line
+     * @return command word (maybe empty)
+     */
     public static String commandWord(String input) {
         String s = input == null ? "" : input.trim();
         int sp = s.indexOf(' ');
         return sp == -1 ? s : s.substring(0, sp);
     }
 
+    /**
+     * Returns everything after the first word.
+     * @param input full user input line
+     * @return remainder after the command (trimmed, may be empty)
+     */
     public static String afterWord(String input) {
         String s = input == null ? "" : input.trim();
         int sp = s.indexOf(' ');
         return sp == -1 ? "" : s.substring(sp + 1).trim();
     }
 
+    /**
+     * Parses a 1-based index and returns a 0-based index.
+     * @param arg user-provided index text
+     * @return 0-based index
+     * @throws MiMiException if not a positive integer
+     */
     public static int parseIndex(String arg) throws MiMiException {
         try {
             int i = Integer.parseInt(arg.trim());
@@ -23,6 +43,12 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses a todo command.
+     * @param rest text after "todo"
+     * @return non-empty description
+     * @throws MiMiException if description is empty
+     */
     public static String parseTodo(String rest) throws MiMiException {
         String desc = (rest == null) ? "" : rest.trim();
         if (desc.isEmpty()) {
@@ -31,6 +57,13 @@ public class Parser {
         return desc;
     }
 
+    /**
+     * Parses a deadline command of the form:
+     * {@code deadline <desc> /by <when>}.
+     * @param rest text after "deadline"
+     * @return {desc, when}
+     * @throws MiMiException if /by or parts are missing
+     */
     public static String[] parseDeadline(String rest) throws MiMiException {
         int pos = rest.indexOf("/by");
         if (pos == -1) throw new MiMiException("Use /by for deadlines (e.g., ... /by 2019-10-15)");
@@ -41,6 +74,13 @@ public class Parser {
         return new String[]{desc, when};
     }
 
+    /**
+     * Parses an event command of the form:
+     * {@code event <desc> /from <a> /to <b>}.
+     * @param rest text after "event"
+     * @return {desc, from, to} (to may be empty)
+     * @throws MiMiException if description is missing
+     */
     public static String[] parseEvent(String rest) throws MiMiException {
         String desc = rest, from = "", to = "";
         int f = rest.indexOf("/from");

@@ -3,6 +3,7 @@ T	0	homework
 D	0	return book	2019-10-15
 E	0	project meeting	2024-08-31 1400	2024-08-31 1600
 D	0	visa appointment	2/12/2019 1800
+T	0	go to class
 
 Note to reader: 1: Done while 0: Not Done
 Thank you for using MiMi

@@ -1,5 +1,8 @@
 package mimi;
 
+/**
+ * Base class for all tasks stored by MiMi.
+ */
 public class Task {
     protected String description;
     protected boolean isDone;
@@ -9,18 +12,25 @@ public class Task {
         this.isDone = false;
     }
 
+    /** Marks this task as done. */
     public void mark() {
         this.isDone = true;
     }
 
+    /** Marks this task as not done. */
     public void unmark() {
         this.isDone = false;
     }
 
+    /**
+     * Returns "X" if done, or a single space if not done.
+     * @return status icon used in text UI
+     */
     public String getStatusIcon() {
         return (isDone ? "X" : " ");
     }
 
+    /** @return the (non-null) description of this task */
     public String getDescription() {
         return description;
     }
