@@ -6,8 +6,6 @@ public class UiMasterList {
 
     public void printLine() { System.out.println(LINE); }
 
-    public void say(String s) { System.out.println(s); }
-
     private final Scanner sc = new Scanner(System.in);
 
     public void sayhi() { System.out.println("Hello! I'm MiMi \n What can I do for you?"); }
@@ -17,10 +15,6 @@ public class UiMasterList {
     public void showError(String msg) { System.out.println(msg); }
 
     public void byebye() {System.out.println("Bye. Hope to see you again soon!");}
-
-    public void showLoadingError() {
-        System.out.println("Could not load your tasks, starting with an empty list.");
-    }
 
     public void showList(TaskList tasks) {
         System.out.println("Here are the tasks in your list:");
