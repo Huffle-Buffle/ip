@@ -75,4 +75,18 @@ public record TaskList(ArrayList<Task> tasks) {
         t.unmark();
         return t;
     }
+
+    /** Case-insensitive substring search over task descriptions. */
+    public ArrayList<Task> find(String keyword) {
+        ArrayList<Task> result = new ArrayList<>();
+        String k = (keyword == null) ? "" : keyword.trim().toLowerCase();
+        if (k.isEmpty()) return result; // empty search -> no matches
+        for (Task t : tasks) {
+            String d = t.getDescription();
+            if (d != null && d.toLowerCase().contains(k)) {
+                result.add(t);
+            }
+        }
+        return result;
+    }
 }
