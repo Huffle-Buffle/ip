@@ -1,21 +1,29 @@
 import java.util.ArrayList;
 
-public class TaskList {
-    private final ArrayList<Task> tasks;
+public record TaskList(ArrayList<Task> tasks) {
+    public TaskList(ArrayList<Task> tasks) {
+        this.tasks = new ArrayList<>(tasks);
+    }
 
-    public TaskList() { this.tasks = new ArrayList<>(); }
+    public void add(Task t) {
+        tasks.add(t);
+    }
 
-    public TaskList(ArrayList<Task> initial) { this.tasks = new ArrayList<>(initial); }
+    public Task remove(int index0) {
+        return tasks.remove(index0);
+    }
 
-    public void add(Task t) { tasks.add(t); }
+    public Task get(int index0) {
+        return tasks.get(index0);
+    }
 
-    public Task remove(int index0) { return tasks.remove(index0); }
+    public int size() {
+        return tasks.size();
+    }
 
-    public Task get(int index0) { return tasks.get(index0); }
-
-    public int size() { return tasks.size(); }
-
-    public ArrayList<Task> asArrayList() { return tasks; }
+    public ArrayList<Task> asArrayList() {
+        return tasks;
+    }
 
     public Task mark(int index0) {
         Task t = tasks.get(index0);
@@ -27,15 +35,5 @@ public class TaskList {
         Task t = tasks.get(index0);
         t.unmark();
         return t;
-    }
-
-    public ArrayList<Task> find(String keyword) {
-        ArrayList<Task> result = new ArrayList<>();
-        String k = keyword == null ? "" : keyword.toLowerCase();
-        for (Task t : tasks) {
-            String d = t.getDescription();
-            if (d != null && d.toLowerCase().contains(k)) result.add(t);
-        }
-        return result;
     }
 }
