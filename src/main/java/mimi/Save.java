@@ -1,7 +1,14 @@
 package mimi;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -16,7 +23,7 @@ public class Save {
     public Save() {
         try {
             Path path = file.toPath();
-            Files.createDirectories(path.getParent());  // no boolean so creates if missing
+            Files.createDirectories(path.getParent());
             if (Files.notExists(path)) {
                 Files.createFile(path);
             }
@@ -33,12 +40,16 @@ public class Save {
         ArrayList<Task> list = new ArrayList<>();
         BufferedReader buffer = null;
         try {
-            if (!file.exists()) return list;
+            if (!file.exists()) {
+                return list;
+            }
             buffer = new BufferedReader(new FileReader(file));
             String task;
             while ((task = buffer.readLine()) != null) {
                 task = task.trim();
-                if (task.isEmpty()) continue;
+                if (task.isEmpty()) {
+                    continue;
+                }
 
                 if (task.startsWith("Task Type")
                         || task.startsWith("Note to reader:")
@@ -47,12 +58,20 @@ public class Save {
                 }
 
                 Task t = parseLine(task);
-                if (t != null) list.add(t);
+                if (t != null) {
+                    list.add(t);
+                }
             }
         } catch (Exception e) {
             System.out.println("load problem: " + e.getMessage());
         } finally {
-            try { if (buffer != null) buffer.close(); } catch (Exception ignore) {}
+            try {
+                if (buffer != null) {
+                    buffer.close();
+                }
+            } catch (Exception ignore) {
+                //something
+            }
         }
         return list;
     }
@@ -70,9 +89,10 @@ public class Save {
 
             // rows
             for (Task t : list) {
-                String line = encodeRow(t);                 // builds the row text
-                if (line == null || line.trim().isEmpty())  // skip invalid/blank rows
+                String line = encodeRow(t);
+                if (line == null || line.trim().isEmpty()) {
                     continue;
+                }
                 bw.write(line);
                 bw.newLine();
             }
@@ -94,19 +114,24 @@ public class Save {
         if (!line.isEmpty()) {
             char c = line.charAt(0);
             if ((c == 'T' || c == 'D' || c == 'E') && line.indexOf('\t') > 0) {
-                return parseTSV(line);
+                return parseTsv(line);
             }
         }
         return null;
     }
 
     private String encodeRow(Task t) {
-        if (t == null) return null;
-
+        if (t == null) {
+            return null;
+        }
         String desc = t.getDescription();
-        if (desc == null) return null;
+        if (desc == null) {
+            return null;
+        }
         desc = desc.trim();
-        if (desc.isEmpty()) return null; // skip blank descriptions
+        if (desc.isEmpty()) {
+            return null; // skip blank descriptions
+        }
 
         String done = "X".equals(t.getStatusIcon()) ? "1" : "0";
 
@@ -125,11 +150,15 @@ public class Save {
         return null;
     }
 
-    private Task parseTSV(String line) {
+    private Task parseTsv(String line) {
         try {
             String[] p = line.split("\t", -1);
-            for (int i = 0; i < p.length; i++) p[i] = p[i].trim();
-            if (p.length < 3) return null;
+            for (int i = 0; i < p.length; i++) {
+                p[i] = p[i].trim();
+            }
+            if (p.length < 3) {
+                return null;
+            }
 
             String type = p[0];
             String done = p[1];
@@ -145,19 +174,23 @@ public class Save {
 
         Task t;
         switch (type) {
-            case "D" -> {
-                String by = (p.length >= 4) ? p[3] : "";
-                t = new Deadline(desc, by);
-            }
-            case "E" -> {
-                String from = (p.length >= 4) ? p[3] : "";
-                String to = (p.length >= 5) ? p[4] : "";
-                t = new Event(desc, from, to);
-            }
-            default -> t = new Todo(desc);
+        case "D" -> {
+            String by = (p.length >= 4) ? p[3] : "";
+            t = new Deadline(desc, by);
+        }
+        case "E" -> {
+            String from = (p.length >= 4) ? p[3] : "";
+            String to = (p.length >= 5) ? p[4] : "";
+            t = new Event(desc, from, to);
+        }
+        default -> t = new Todo(desc);
         }
 
-        if ("1".equals(done)) t.mark(); else t.unmark();
+        if ("1".equals(done)) {
+            t.mark();
+        } else {
+            t.unmark();
+        }
         return t;
     }
 }
