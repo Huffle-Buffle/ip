@@ -36,7 +36,9 @@ public class Parser {
     public static int parseIndex(String arg) throws MiMiException {
         try {
             int i = Integer.parseInt(arg.trim());
-            if (i <= 0) throw new NumberFormatException();
+            if (i <= 0) {
+                throw new NumberFormatException();
+            }
             return i - 1;
         } catch (Exception e) {
             throw new MiMiException("Please give a valid positive number.");
@@ -66,11 +68,16 @@ public class Parser {
      */
     public static String[] parseDeadline(String rest) throws MiMiException {
         int pos = rest.indexOf("/by");
-        if (pos == -1) throw new MiMiException("Use /by for deadlines (e.g., ... /by 2019-10-15)");
+        if (pos == -1) {
+            throw new MiMiException("Use /by for deadlines (e.g., deadline return book /by 2019-10-15)");
+        }
         String desc = rest.substring(0, pos).trim();
         String when = rest.substring(pos + 3).trim(); // after '/by'
-        if (desc.isEmpty() || when.isEmpty())
-            throw new MiMiException("Chop chop what's the deadline? Please provide '/by <deadline>' (e.g., deadline return book /by Sunday)");
+        if (desc.isEmpty() || when.isEmpty()) {
+            throw new MiMiException(
+                    "Please provide both a description and a deadline, e.g., "
+                            + "'deadline return book /by 2019-10-15'");
+        }
         return new String[]{desc, when};
     }
 
@@ -78,23 +85,29 @@ public class Parser {
      * Parses an event command of the form:
      * {@code event <desc> /from <a> /to <b>}.
      * @param rest text after "event"
-     * @return {desc, from, to} (to may be empty)
+     * @return {desc, from, to}
      * @throws MiMiException if description is missing
      */
     public static String[] parseEvent(String rest) throws MiMiException {
-        String desc = rest, from = "", to = "";
+        String desc = rest;
+        String from = "";
+        String to = "";
         int f = rest.indexOf("/from");
         if (f != -1) {
             desc = rest.substring(0, f).trim();
             String afterFrom = rest.substring(f + 5).trim();
             int t = afterFrom.indexOf("/to");
-            if (t == -1) from = afterFrom.trim();
-            else {
+            if (t == -1) {
+                from = afterFrom.trim();
+            } else {
                 from = afterFrom.substring(0, t).trim();
                 to = afterFrom.substring(t + 3).trim();
             }
         }
-        if (desc.isEmpty()) throw new MiMiException("What is the event??? Please provide description, '/from ...', and '/to ...'. If its a good event we should celebrate!");
+        if (desc.isEmpty()) {
+            throw new MiMiException(
+                    "Please provide an event description and optionally '/from ...' and '/to ...'.");
+        }
         return new String[]{desc, from, to};
     }
 }

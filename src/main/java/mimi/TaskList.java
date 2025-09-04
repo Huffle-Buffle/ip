@@ -80,7 +80,9 @@ public record TaskList(ArrayList<Task> tasks) {
     public ArrayList<Task> find(String keyword) {
         ArrayList<Task> result = new ArrayList<>();
         String k = (keyword == null) ? "" : keyword.trim().toLowerCase();
-        if (k.isEmpty()) return result; // empty search -> no matches
+        if (k.isEmpty()) {
+            return result; // empty search -> no matches
+        }
         for (Task t : tasks) {
             String d = t.getDescription();
             if (d != null && d.toLowerCase().contains(k)) {

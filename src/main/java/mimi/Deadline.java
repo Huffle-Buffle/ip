@@ -7,10 +7,11 @@ import java.time.format.DateTimeFormatter;
  * A task that has a due date/time. Pretty-prints ISO dates for Level-8.
  */
 public class Deadline extends Task {
-    protected String by;
-    private LocalDate date;
 
     private static final DateTimeFormatter OUT = DateTimeFormatter.ofPattern("MMM d yyyy");
+
+    protected String by;
+    private LocalDate date;
 
     /**
      * Creates a deadline task.

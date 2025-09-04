@@ -30,68 +30,72 @@ public class MiMi {
 
         while (true) {
             String input = ui.readCommand();
-            if (input == null) input = "";
+            if (input == null) {
+                input = "";
+            }
             input = input.trim();
-            if (input.isEmpty()) continue;
+            if (input.isEmpty()) {
+                continue;
+            }
 
             String cmd = Parser.commandWord(input);
             String keyword = Parser.afterWord(input);
 
             try {
                 switch (cmd) {
-                    case "bye" -> {
-                        ui.byebye();
-                        return;
-                    }
-                    case "list" -> ui.showList(tasks);
-                    case "todo" -> {
-                        Todo t = new Todo(Parser.parseTodo(keyword));
-                        tasks.add(t);
-                        storage.save(tasks.asArrayList());
-                        ui.showAdded(t);
+                case "bye" -> {
+                    ui.byebye();
+                    return;
+                }
+                case "list" -> ui.showList(tasks);
+                case "todo" -> {
+                    Todo t = new Todo(Parser.parseTodo(keyword));
+                    tasks.add(t);
+                    storage.save(tasks.asArrayList());
+                    ui.showAdded(t);
 
-                    }
-                    case "deadline" -> {
-                        String[] a = Parser.parseDeadline(keyword);
+                }
+                case "deadline" -> {
+                    String[] a = Parser.parseDeadline(keyword);
 
-                        Deadline d = new Deadline(a[0], a[1]);
+                    Deadline d = new Deadline(a[0], a[1]);
 
-                        tasks.add(d);
-                        storage.save(tasks.asArrayList());
-                        ui.showAdded(d);
+                    tasks.add(d);
+                    storage.save(tasks.asArrayList());
+                    ui.showAdded(d);
 
-                    }
-                    case "event" -> {
-                        String[] a = Parser.parseEvent(keyword);
+                }
+                case "event" -> {
+                    String[] a = Parser.parseEvent(keyword);
 
-                        Event ev = new Event(a[0], a[1], a[2]);
-                        tasks.add(ev);
-                        storage.save(tasks.asArrayList());
-                        ui.showAdded(ev);
+                    Event ev = new Event(a[0], a[1], a[2]);
+                    tasks.add(ev);
+                    storage.save(tasks.asArrayList());
+                    ui.showAdded(ev);
 
-                    }
-                    case "mark" -> {
-                        int idx = Parser.parseIndex(keyword);
+                }
+                case "mark" -> {
+                    int idx = Parser.parseIndex(keyword);
 
-                        Task t = tasks.mark(idx);
-                        storage.save(tasks.asArrayList());
-                        ui.showMarked(t);
+                    Task t = tasks.mark(idx);
+                    storage.save(tasks.asArrayList());
+                    ui.showMarked(t);
 
-                    }
-                    case "unmark" -> {
-                        int idx = Parser.parseIndex(keyword);
-                        Task t = tasks.unmark(idx);
-                        storage.save(tasks.asArrayList());
-                        ui.showUnmarked(t);
+                }
+                case "unmark" -> {
+                    int idx = Parser.parseIndex(keyword);
+                    Task t = tasks.unmark(idx);
+                    storage.save(tasks.asArrayList());
+                    ui.showUnmarked(t);
 
-                    }
-                    case "delete" -> {
-                        int idx = Parser.parseIndex(keyword);
-                        Task removed = tasks.remove(idx);
-                        storage.save(tasks.asArrayList());
-                        ui.showRemoved(removed);
+                }
+                case "delete" -> {
+                    int idx = Parser.parseIndex(keyword);
+                    Task removed = tasks.remove(idx);
+                    storage.save(tasks.asArrayList());
+                    ui.showRemoved(removed);
 
-                    }
+                }
                 case "find" -> {
                     if (keyword.isEmpty()) {
                         ui.showError("Please provide a keyword: find <word>");
@@ -100,7 +104,7 @@ public class MiMi {
                         ui.showFind(matches);
                     }
                 }
-                    default -> ui.showError("Alamak what is this?");
+                default -> ui.showError("Alamak what is this?");
                 }
             } catch (MiMiException e) {
                 ui.showError(e.getMessage());
@@ -117,6 +121,6 @@ public class MiMi {
      * @param args unused CLI args
      */
     public static void main(String[] args) {
-            new MiMi().run();
+        new MiMi().run();
     }
 }

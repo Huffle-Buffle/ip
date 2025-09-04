@@ -24,7 +24,9 @@ public class UiMasterList {
     public void showError(String msg) { System.out.println(msg); }
 
     /** Prints the goodbye shown when MiMi ends. */
-    public void byebye() {System.out.println("Bye. Hope to see you again soon!");}
+    public void byebye() {
+        System.out.println("Bye. Hope to see you again soon!");
+    }
 
     /**
      * Prints the current task list with 1-based indices.
