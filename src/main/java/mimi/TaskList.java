@@ -3,18 +3,24 @@ package mimi;
 import java.util.ArrayList;
 
 /**
- * A thin wrapper around an {@code ArrayList<Task>}.
- * Provides basic operations used by MiMi.
+ * A thin wrapper around an {@code ArrayList<Task>} that provides basic operations used by MiMi.
+ * Note: Some programmer assumptions are documented with Java {@code assert} statements.
+ * Enable assertions during development with {@code -ea}.
  */
 public record TaskList(ArrayList<Task> tasks) {
 
     /** Creates a new empty task list. */
     public TaskList(ArrayList<Task> tasks) {
+        assert tasks != null : "TaskList must and cannot be null!";
         this.tasks = new ArrayList<>(tasks);
+        for (Task taskL : this.tasks) {
+            assert taskL != null : "TaskList cannot contain null tasks";
+        }
     }
 
     /** Adds a task to the end of the list. */
     public void add(Task t) {
+        assert t != null : "Cannot add null Task";
         tasks.add(t);
     }
 
@@ -25,7 +31,9 @@ public record TaskList(ArrayList<Task> tasks) {
      * @throws IndexOutOfBoundsException if index is invalid
      */
     public Task remove(int index0) {
-        return tasks.remove(index0);
+        Task removed = tasks.remove(index0);
+        assert removed != null : "Removed task cannot be null";
+        return removed;
     }
 
     /**
@@ -35,7 +43,9 @@ public record TaskList(ArrayList<Task> tasks) {
      * @throws IndexOutOfBoundsException if index is invalid
      */
     public Task get(int index0) {
-        return tasks.get(index0);
+        Task t = tasks.get(index0);
+        assert t != null : "Task at index cannot be null";
+        return t;
     }
 
     /** @return number of tasks stored. */
@@ -59,7 +69,9 @@ public record TaskList(ArrayList<Task> tasks) {
      * @throws IndexOutOfBoundsException if index is invalid
      */
     public Task mark(int index0) {
+        assert index0 >= 0 && index0 < tasks.size() : "Index out of bounds: " + index0 + ". Choose a valid index!";
         Task t = tasks.get(index0);
+        assert t != null : "Task cannot be null";
         t.mark();
         return t;
     }
@@ -71,7 +83,9 @@ public record TaskList(ArrayList<Task> tasks) {
      * @throws IndexOutOfBoundsException if index is invalid
      */
     public Task unmark(int index0) {
+        assert index0 >= 0 && index0 < tasks.size() : "Index out of bounds: " + index0 + ". Choose a valid index!";
         Task t = tasks.get(index0);
+        assert t != null : "Task cannot be null";
         t.unmark();
         return t;
     }
@@ -88,8 +102,10 @@ public record TaskList(ArrayList<Task> tasks) {
             return result; // empty search -> no matches
         }
         for (Task t : tasks) {
+            assert t != null : "Task cannot be null";
             String d = t.getDescription();
-            if (d != null && d.toLowerCase().contains(k)) {
+            assert d != null : "Task description cannot be null";
+            if (d.toLowerCase().contains(k)) {
                 result.add(t);
             }
         }
