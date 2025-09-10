@@ -139,12 +139,12 @@ public class Save {
             return "T\t" + done + "\t" + desc;
         }
         if (t instanceof Deadline d) {
-            String by = (d.by == null) ? "" : d.by;
+            String by = (d.getBy() == null) ? "" : d.getBy();
             return "D\t" + done + "\t" + desc + "\t" + by;
         }
         if (t instanceof Event e) {
-            String from = (e.from == null) ? "" : e.from;
-            String to = (e.to == null) ? "" : e.to;
+            String from = (e.getFrom() == null) ? "" : e.getFrom();
+            String to = (e.getTo() == null) ? "" : e.getTo();
             return "E\t" + done + "\t" + desc + "\t" + from + "\t" + to;
         }
         return null;

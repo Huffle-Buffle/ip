@@ -9,9 +9,10 @@ import java.time.format.DateTimeFormatter;
 public class Deadline extends Task {
 
     private static final DateTimeFormatter OUT = DateTimeFormatter.ofPattern("MMM d yyyy");
+    private static final DateTimeFormatter IN = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    protected String by;
-    private LocalDate date;
+    private final String by;
+    private final LocalDate date;
 
     /**
      * Creates a deadline task.
@@ -20,12 +21,23 @@ public class Deadline extends Task {
      */
     public Deadline(String description, String by) {
         super(description);
-        this.by = by;
-        try {
-            this.date = (by == null) ? null : LocalDate.parse(by.trim());
-        } catch (Exception ignore) {
-            this.date = null; // not parseable -> fall back to original string
+        String cleaned = (by == null) ? "" : by.trim();
+        this.by = cleaned;
+
+        LocalDate parsed = null;
+        if (!cleaned.isEmpty()) {
+            try {
+                parsed = LocalDate.parse(cleaned, IN);
+            } catch (Exception ignored) {
+                // not parseable -> fall back to original string
+            }
         }
+        this.date = parsed;
+    }
+
+    /** Raw 'by' string as entered by the user (possibly empty). */
+    public String getBy() {
+        return by;
     }
 
     /** @return string form like {@code [D][ ] desc (by: Oct 15 2019)} */
