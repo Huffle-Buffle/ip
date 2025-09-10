@@ -8,32 +8,32 @@ package mimi;
  * Enable assertions during development with {@code -ea}.
  */
 public class Parser {
-    /**
-     * Returns the first word (command) from the input.
-     * @param input full user input line
-     * @return command word (maybe empty)
-     */
+    // Due to this week's topic on code quality, I had to change the whole
+    // structure cause if not we have a lot of magic strings and numbers again haizz
+    // so troublesome...
+    private static final String BY = "/by";
+    private static final String FROM = "/from";
+    private static final String TO = "/to";
+    private static final int BY_LEN = BY.length();
+    private static final int FROM_LEN = FROM.length();
+    private static final int TO_LEN = TO.length();
+
+    /** Returns the first word (command) from the input. */
     public static String commandWord(String input) {
-        String s = input == null ? "" : input.trim();
+        String s = (input == null) ? "" : input.trim();
         int sp = s.indexOf(' ');
-        return sp == -1 ? s : s.substring(0, sp);
+        return (sp == -1) ? s : s.substring(0, sp);
     }
 
-    /**
-     * Returns everything after the first word.
-     * @param input full user input line
-     * @return remainder after the command (trimmed, may be empty)
-     */
+    /** Returns everything after the first word (trimmed, may be empty). */
     public static String afterWord(String input) {
-        String s = input == null ? "" : input.trim();
+        String s = (input == null) ? "" : input.trim();
         int sp = s.indexOf(' ');
-        return sp == -1 ? "" : s.substring(sp + 1).trim();
+        return (sp == -1) ? "" : s.substring(sp + 1).trim();
     }
 
     /**
      * Parses a 1-based index and returns a 0-based index.
-     * @param arg user-provided index text
-     * @return 0-based index
      * @throws MiMiException if not a positive integer
      */
     public static int parseIndex(String arg) throws MiMiException {
@@ -49,12 +49,7 @@ public class Parser {
         }
     }
 
-    /**
-     * Parses a todo command.
-     * @param rest text after "todo"
-     * @return non-empty description
-     * @throws MiMiException if description is empty
-     */
+    /** Parses a todo command and returns a non-empty description. */
     public static String parseTodo(String rest) throws MiMiException {
         String desc = (rest == null) ? "" : rest.trim();
         if (desc.isEmpty()) {
@@ -64,56 +59,48 @@ public class Parser {
     }
 
     /**
-     * Parses a deadline command of the form:
-     * {@code deadline <desc> /by <when>}.
-     * @param rest text after "deadline"
+     * Parses a deadline command of the form: {@code deadline <desc> /by <when>}.
      * @return {desc, when}
-     * @throws MiMiException if /by or parts are missing
      */
     public static String[] parseDeadline(String rest) throws MiMiException {
-        int pos = rest.indexOf("/by");
+        int pos = rest.indexOf(BY);
         if (pos == -1) {
             throw new MiMiException("Use /by for deadlines (e.g., deadline return book /by 2019-10-15)");
         }
         String desc = rest.substring(0, pos).trim();
-        String when = rest.substring(pos + 3).trim(); // after '/by'
+        String when = rest.substring(pos + BY_LEN).trim();
         if (desc.isEmpty() || when.isEmpty()) {
             throw new MiMiException(
-                    "Please provide both a description and a deadline, e.g., "
-                            + "'deadline return book /by 2019-10-15'");
+                    "Please provide both a description and a deadline, e.g., 'deadline return book /by 2019-10-15'");
         }
-        return new String[]{desc, when};
+        return new String[] { desc, when };
     }
 
     /**
-     * Parses an event command of the form:
-     * {@code event <desc> /from <a> /to <b>}.
-     * @param rest text after "event"
+     * Parses an event command of the form: {@code event <desc> /from <a> /to <b>}.
      * @return {desc, from, to}
-     * @throws MiMiException if description is missing
      */
     public static String[] parseEvent(String rest) throws MiMiException {
         assert rest != null : "parseEvent expects non null input";
         String desc = rest;
         String from = "";
         String to = "";
-        int f = rest.indexOf("/from");
+        int f = rest.indexOf(FROM);
         if (f != -1) {
             desc = rest.substring(0, f).trim();
-            String afterFrom = rest.substring(f + 5).trim();
-            int t = afterFrom.indexOf("/to");
+            String afterFrom = rest.substring(f + FROM_LEN).trim();
+            int t = afterFrom.indexOf(TO);
             if (t == -1) {
                 from = afterFrom.trim();
             } else {
                 from = afterFrom.substring(0, t).trim();
-                to = afterFrom.substring(t + 3).trim();
+                to = afterFrom.substring(t + TO_LEN).trim();
             }
         }
         if (desc.isEmpty()) {
             throw new MiMiException(
                     "Please provide an event description and optionally '/from ...' and '/to ...'.");
         }
-        return new String[]{desc, from, to};
+        return new String[] { desc, from, to };
     }
 }
-

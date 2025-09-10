@@ -17,7 +17,15 @@ import java.util.ArrayList;
  * Creates the folder/file if they do not exist.
  */
 public class Save {
-    private final File file = Paths.get("data", "MiMi.txt").toFile();
+    // constants (avoid magic strings)
+    private static final String DATA_DIR = "data";
+    private static final String FILE_NAME = "MiMi.txt";
+    private static final String SEP = "\t";
+    private static final String HEADER = "Task Type\tDone/Not Done\tDescription";
+    private static final String FOOTER_NOTE = "Note to reader: 1: Done while 0: Not Done";
+    private static final String FOOTER_THANKS = "Thank you for using MiMi";
+
+    private final File file = Paths.get(DATA_DIR, FILE_NAME).toFile();
 
     /** Prepares the folder/file used for saving. */
     public Save() {
@@ -38,40 +46,23 @@ public class Save {
      */
     public ArrayList<Task> load() {
         ArrayList<Task> list = new ArrayList<>();
-        BufferedReader buffer = null;
-        try {
-            if (!file.exists()) {
-                return list;
-            }
-            buffer = new BufferedReader(new FileReader(file));
-            String task;
-            while ((task = buffer.readLine()) != null) {
-                task = task.trim();
-                if (task.isEmpty()) {
+        if (!file.exists()) {
+            return list;
+        }
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String trimmed = line.trim();
+                if (trimmed.isEmpty() || isMetaLine(trimmed)) {
                     continue;
                 }
-
-                if (task.startsWith("Task Type")
-                        || task.startsWith("Note to reader:")
-                        || task.startsWith("Thank you")) {
-                    continue;
-                }
-
-                Task t = parseLine(task);
+                Task t = parseLine(trimmed);
                 if (t != null) {
                     list.add(t);
                 }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println("load problem: " + e.getMessage());
-        } finally {
-            try {
-                if (buffer != null) {
-                    buffer.close();
-                }
-            } catch (Exception ignore) {
-                //something goes here I guess :p
-            }
         }
         return list;
     }
@@ -83,27 +74,16 @@ public class Save {
      */
     public void save(ArrayList<Task> list) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, false))) {
-            // header starts here btw
-            bw.write("Task Type\tDone/Not Done\tDescription");
-            bw.newLine();
-
-            // rows
+            writeHeader(bw);
             for (Task t : list) {
                 String line = encodeRow(t);
-                if (line == null || line.trim().isEmpty()) {
+                if (line == null || line.isBlank()) {
                     continue;
                 }
                 bw.write(line);
                 bw.newLine();
             }
-
-            bw.newLine();
-            // footer starts here
-            bw.write("Note to reader: 1: Done while 0: Not Done");
-            bw.newLine();
-            bw.write("Thank you for using MiMi");
-            bw.newLine();
-
+            writeFooter(bw);
         } catch (IOException e) {
             System.out.println("There was a problem when saving MiMi.txt: " + e.getMessage());
         }
@@ -136,22 +116,23 @@ public class Save {
         String done = "X".equals(t.getStatusIcon()) ? "1" : "0";
 
         if (t instanceof Todo) {
-            return "T\t" + done + "\t" + desc;
+            return "T" + SEP + done + SEP + desc;
         }
         if (t instanceof Deadline d) {
-            assert d.by != null : "Deadline 'by' cannot be null";
-            return "D\t" + done + "\t" + desc + "\t" + d.by;
+            String by = (d.getBy() == null) ? "" : d.getBy();
+            return "D" + SEP + done + SEP + desc + SEP + by;
         }
         if (t instanceof Event e) {
-            assert e.from != null && e.to != null : "Event 'from'/'to' cannot be null";
-            return "E\t" + done + "\t" + desc + "\t" + e.from + "\t" + e.to;
+            String from = (e.getFrom() == null) ? "" : e.getFrom();
+            String to = (e.getTo() == null) ? "" : e.getTo();
+            return "E" + SEP + done + SEP + desc + SEP + from + SEP + to;
         }
         return null;
     }
 
     private Task parseTsv(String line) {
         try {
-            String[] p = line.split("\t", -1);
+            String[] p = line.split(SEP, -1);
             for (int i = 0; i < p.length; i++) {
                 p[i] = p[i].trim();
             }
@@ -161,8 +142,9 @@ public class Save {
 
             String type = p[0];
             String done = p[1];
-            assert type != null && !type.isEmpty() : "Type cannot be null/empty";
-            assert done != null && (done.equals("0") || done.equals("1")) : "Done flag MUST be 0 or 1";
+            assert type != null && !type.isEmpty() : "Type must not be null/empty";
+            assert done != null && (done.equals("0") || done.equals("1")) : "Done flag must be 0 or 1";
+
             return getT(p, type, done);
         } catch (Exception e) {
             System.out.println("bad TSV line, skipped: " + line);
@@ -173,6 +155,7 @@ public class Save {
     private static Task getT(String[] p, String type, String done) {
         assert p != null && p.length >= 3 : "TSV array must have at least 3 columns";
         String desc = p[2];
+        assert desc != null : "Description must not be null";
 
         Task t;
         switch (type) {
@@ -194,5 +177,25 @@ public class Save {
             t.unmark();
         }
         return t;
+    }
+
+    // ---- small helpers to improve readability ----
+    private static boolean isMetaLine(String line) {
+        return line.startsWith("Task Type")
+                || line.startsWith("Note to reader:")
+                || line.startsWith("Thank you");
+    }
+
+    private static void writeHeader(BufferedWriter bw) throws IOException {
+        bw.write(HEADER);
+        bw.newLine();
+    }
+
+    private static void writeFooter(BufferedWriter bw) throws IOException {
+        bw.newLine();
+        bw.write(FOOTER_NOTE);
+        bw.newLine();
+        bw.write(FOOTER_THANKS);
+        bw.newLine();
     }
 }

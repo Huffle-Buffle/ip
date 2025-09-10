@@ -90,7 +90,11 @@ public record TaskList(ArrayList<Task> tasks) {
         return t;
     }
 
-    /** Case-insensitive substring search over task descriptions. */
+    /**
+     * Case-insensitive substring search over task descriptions.
+     * @param keyword word/phrase to look for (ignored if null/blank)
+     * @return list of matching tasks
+     */
     public ArrayList<Task> find(String keyword) {
         ArrayList<Task> result = new ArrayList<>();
         String k = (keyword == null) ? "" : keyword.trim().toLowerCase();
