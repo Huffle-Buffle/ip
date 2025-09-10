@@ -28,7 +28,7 @@ public class Save {
                 Files.createFile(path);
             }
         } catch (IOException e) {
-            System.out.println("could not save file :p : " + e.getMessage());
+            System.out.println("Could not save file :p : " + e.getMessage());
         }
     }
 
@@ -70,7 +70,7 @@ public class Save {
                     buffer.close();
                 }
             } catch (Exception ignore) {
-                //something
+                //something goes here I guess :p
             }
         }
         return list;
@@ -139,13 +139,12 @@ public class Save {
             return "T\t" + done + "\t" + desc;
         }
         if (t instanceof Deadline d) {
-            String by = (d.by == null) ? "" : d.by;
-            return "D\t" + done + "\t" + desc + "\t" + by;
+            assert d.by != null : "Deadline 'by' cannot be null";
+            return "D\t" + done + "\t" + desc + "\t" + d.by;
         }
         if (t instanceof Event e) {
-            String from = (e.from == null) ? "" : e.from;
-            String to = (e.to == null) ? "" : e.to;
-            return "E\t" + done + "\t" + desc + "\t" + from + "\t" + to;
+            assert e.from != null && e.to != null : "Event 'from'/'to' cannot be null";
+            return "E\t" + done + "\t" + desc + "\t" + e.from + "\t" + e.to;
         }
         return null;
     }
@@ -162,6 +161,8 @@ public class Save {
 
             String type = p[0];
             String done = p[1];
+            assert type != null && !type.isEmpty() : "Type cannot be null/empty";
+            assert done != null && (done.equals("0") || done.equals("1")) : "Done flag MUST be 0 or 1";
             return getT(p, type, done);
         } catch (Exception e) {
             System.out.println("bad TSV line, skipped: " + line);
@@ -170,6 +171,7 @@ public class Save {
     }
 
     private static Task getT(String[] p, String type, String done) {
+        assert p != null && p.length >= 3 : "TSV array must have at least 3 columns";
         String desc = p[2];
 
         Task t;

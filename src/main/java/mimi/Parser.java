@@ -3,6 +3,9 @@ package mimi;
 /**
  * Stateless helpers that parse user input into command parts.
  * Throws {@link MiMiException} for malformed input.
+ * Note: Some programmer assumptions are guarded with Java {@code assert}
+ * Statements are : parseIndex & parseEvent
+ * Enable assertions during development with {@code -ea}.
  */
 public class Parser {
     /**
@@ -34,6 +37,7 @@ public class Parser {
      * @throws MiMiException if not a positive integer
      */
     public static int parseIndex(String arg) throws MiMiException {
+        assert arg != null : "parseIndex expects non null arg, please enter correctly";
         try {
             int i = Integer.parseInt(arg.trim());
             if (i <= 0) {
@@ -89,6 +93,7 @@ public class Parser {
      * @throws MiMiException if description is missing
      */
     public static String[] parseEvent(String rest) throws MiMiException {
+        assert rest != null : "parseEvent expects non null input";
         String desc = rest;
         String from = "";
         String to = "";
