@@ -103,4 +103,22 @@ public class Parser {
         }
         return new String[] { desc, from, to };
     }
+
+    /**
+     * Parses a within command: {@code within <desc> /from <a> /to <b>}.
+     */
+    public static String[] parseWithin(String rest) throws MiMiException {
+        int f = rest.indexOf("/from");
+        int t = rest.indexOf("/to");
+        if (f == -1 || t == -1 || f > t) {
+            throw new MiMiException("Use /from and /to, e.g., within collect cert /from 2025-01-15 /to 2025-01-25");
+        }
+        String desc = rest.substring(0, f).trim();
+        String from = rest.substring(f + 5, t).replace("/", "").trim();
+        String to = rest.substring(t + 3).replace("/", "").trim();
+        if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            throw new MiMiException("Please provide a description, a from-date and a to-date.");
+        }
+        return new String[]{desc, from, to};
+    }
 }

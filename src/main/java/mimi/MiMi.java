@@ -9,19 +9,20 @@ import java.util.ArrayList;
 public class MiMi {
     // Due to this week's topic on code quality, I had to change the whole
     // structure cause if not we have a lot of magic strings and numbers haizzz
-    private static final String CMD_BYE = "bye";
-    private static final String CMD_LIST = "list";
-    private static final String CMD_TODO = "todo";
-    private static final String CMD_DEADLINE = "deadline";
-    private static final String CMD_EVENT = "event";
-    private static final String CMD_MARK = "mark";
-    private static final String CMD_UNMARK = "unmark";
-    private static final String CMD_DELETE = "delete";
-    private static final String CMD_FIND = "find";
-    private static final String MSG_NEED_INDEX = "Please provide a valid task number.";
-    private static final String MSG_UNKNOWN_CMD = "Alamak what is this?";
-    private static final String MSG_FIND_USAGE = "Please provide a keyword: find <word>";
-    private static final String DEFAULT_SAVE_PATH = "data/MiMi.txt";
+    private static final String bye = "bye";
+    private static final String list = "list";
+    private static final String todo = "todo";
+    private static final String deadline = "deadline";
+    private static final String event = "event";
+    private static final String mark = "mark";
+    private static final String unmark = "unmark";
+    private static final String delete = "delete";
+    private static final String find = "find";
+    private static final String do_within_period = "within";
+    private static final String index_error = "Please provide a valid task number.";
+    private static final String unknown = "Alamak what is this?";
+    private static final String find_error = "Please provide a keyword: find <word>";
+    private static final String save_path = "data/MiMi.txt";
 
     private final UiMasterList ui;
     private final Storage storage;
@@ -30,7 +31,7 @@ public class MiMi {
     /** Creates MiMi and loads tasks from disk (folder/file are created if missing). */
     public MiMi() {
         this.ui = new UiMasterList();
-        this.storage = new Storage(DEFAULT_SAVE_PATH);
+        this.storage = new Storage(save_path);
         ArrayList<Task> loaded = storage.load();
         this.tasks = new TaskList(loaded);
     }
@@ -54,68 +55,74 @@ public class MiMi {
 
             try {
                 switch (cmd) {
-                case CMD_BYE -> {
+                case bye -> {
                     ui.byebye();
                     return;
                 }
-                case CMD_LIST -> ui.showList(tasks);
+                case list -> ui.showList(tasks);
 
-                case CMD_TODO -> {
+                case todo -> {
                     Todo t = new Todo(Parser.parseTodo(keyword));
                     add(t);
                     ui.showAdded(t);
                 }
 
-                case CMD_DEADLINE -> {
+                case deadline -> {
                     String[] a = Parser.parseDeadline(keyword);
                     Deadline d = new Deadline(a[0], a[1]);
                     add(d);
                     ui.showAdded(d);
                 }
 
-                case CMD_EVENT -> {
+                case event -> {
                     String[] a = Parser.parseEvent(keyword);
                     Event ev = new Event(a[0], a[1], a[2]);
                     add(ev);
                     ui.showAdded(ev);
                 }
 
-                case CMD_MARK -> {
+                case mark -> {
                     int idx = Parser.parseIndex(keyword);
                     Task t = tasks.mark(idx);
                     save();
                     ui.showMarked(t);
                 }
 
-                case CMD_UNMARK -> {
+                case unmark -> {
                     int idx = Parser.parseIndex(keyword);
                     Task t = tasks.unmark(idx);
                     save();
                     ui.showUnmarked(t);
                 }
 
-                case CMD_DELETE -> {
+                case delete -> {
                     int idx = Parser.parseIndex(keyword);
                     Task removed = tasks.remove(idx);
                     save();
                     ui.showRemoved(removed);
                 }
 
-                case CMD_FIND -> {
+                case find -> {
                     if (keyword.isEmpty()) {
-                        ui.showError(MSG_FIND_USAGE);
+                        ui.showError(find_error);
                     } else {
                         var matches = tasks.find(keyword);
                         ui.showFind(matches);
                     }
                 }
-
-                default -> ui.showError(MSG_UNKNOWN_CMD);
+                case do_within_period -> {
+                    String[] a = Parser.parseWithin(keyword);
+                    DoWithinPeriodTasks w = new DoWithinPeriodTasks(a[0], a[1], a[2]);
+                    tasks.add(w);
+                    storage.save(tasks.asArrayList());
+                    ui.showAdded(w);
+                }
+                default -> ui.showError(unknown);
                 }
             } catch (MiMiException e) {
                 ui.showError(e.getMessage());
             } catch (IndexOutOfBoundsException e) {
-                ui.showError(MSG_NEED_INDEX);
+                ui.showError(index_error);
             } catch (Exception e) {
                 ui.showError("Something went wrong: " + e.getMessage());
             }
