@@ -52,7 +52,8 @@ public class Parser {
     public static String parseTodo(String rest) throws MiMiException {
         String desc = (rest == null) ? "" : rest.trim();
         if (desc.isEmpty()) {
-            throw new MiMiException("How can there be nothing to do, there is always something to do!");
+            throw new MiMiException("How can there be nothing to do, there is always something to do!"
+                    + "Please enter your description correctly!");
         }
         return desc;
     }
