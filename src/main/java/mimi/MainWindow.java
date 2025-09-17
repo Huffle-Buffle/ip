@@ -1,5 +1,7 @@
 package mimi;
 
+import java.util.Objects;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -22,8 +24,10 @@ public class MainWindow extends AnchorPane {
 
     private MiMi mimi;
 
-    private Image userImage = new Image(this.getClass().getResourceAsStream("/images/User.png"));
-    private Image mimiImage = new Image(this.getClass().getResourceAsStream("/images/MiMi.png"));
+    private final Image userImage = new Image(Objects.requireNonNull(this.getClass()
+            .getResourceAsStream("/images/User.png")));
+    private final Image mimiImage = new Image(Objects.requireNonNull(this.getClass()
+            .getResourceAsStream("/images/MiMi.png")));
 
     @FXML
     public void initialize() {

@@ -12,22 +12,33 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
- * Very small persistence helper.
- * Saves/loads tasks to a TSV-like text file at {@code data/MiMi.txt}.
- * Creates the folder/file if they do not exist.
+ * Handles persistence for MiMi tasks.
+ * This class saves and loads {@link Task} objects to/from a tab-separated (TSV-like)
+ * text file at {@code data/MiMi.txt}. It automatically creates the data folder/file
+ * if they do not already exist.
  */
 public class Save {
-    // constants (avoid magic strings)
-    private static final String DATA_DIR = "data";
-    private static final String FILE_NAME = "MiMi.txt";
-    private static final String SEP = "\t";
-    private static final String HEADER = "Task Type\tDone/Not Done\tDescription";
-    private static final String FOOTER_NOTE = "Note to reader: 1: Done while 0: Not Done";
-    private static final String FOOTER_THANKS = "Thank you for using MiMi";
+    // constants added to avoid magic strings as per week 5's increment
+    /** Directory where data is stored. */
+    private static final String data_dir = "data";
+    /** Name of the save file. */
+    private static final String filename = "MiMi.txt";
+    /** Tab character used as field separator. */
+    private static final String seperator = "\t";
+    /** Header row written at the top of the save file. */
+    private static final String header = "Task Type\tDone/Not Done\tDescription";
+    /** Footer note indicating meaning of 0 and 1 values. */
+    private static final String footernote = "Note to reader: 1: Done while 0: Not Done";
+    /** Footer thank-you message. */
+    private static final String thankyou = "Thank you for using MiMi";
 
-    private final File file = Paths.get(DATA_DIR, FILE_NAME).toFile();
+    /** The file object representing the save file. */
+    private final File file = Paths.get(data_dir, filename).toFile();
 
-    /** Prepares the folder/file used for saving. */
+    /**
+     * Creates a {@code Save} object and ensures that the data directory and save file exist.
+     * If they do not exist, they will be created automatically.
+     */
     public Save() {
         try {
             Path path = file.toPath();
@@ -41,8 +52,12 @@ public class Save {
     }
 
     /**
-     * Loads tasks from disk. Ignores header/footer lines.
-     * @return list of tasks (empty if file is missing or unreadable)
+     * Loads all saved tasks from the save file on disk.
+     * Skips empty lines and metadata lines (header/footer). Each valid line
+     * is parsed into a {@link Task} object.
+     *
+     * @return An {@link ArrayList} of {@link Task} objects.
+     *         Returns an empty list if the file does not exist or cannot be read.
      */
     public ArrayList<Task> load() {
         ArrayList<Task> list = new ArrayList<>();
@@ -53,7 +68,7 @@ public class Save {
             String line;
             while ((line = br.readLine()) != null) {
                 String trimmed = line.trim();
-                if (trimmed.isEmpty() || isMetaLine(trimmed)) {
+                if (trimmed.isEmpty() || endingLineCheck(trimmed)) {
                     continue;
                 }
                 Task t = parseLine(trimmed);
@@ -68,9 +83,11 @@ public class Save {
     }
 
     /**
-     * Writes the header, all tasks, and a short footer.
-     * Skips invalid/blank rows.
-     * @param list tasks to save
+     * Saves all given tasks to the save file on disk.
+     * This method overwrites the existing file, writes a header, each task as a TSV row,
+     * and then writes a footer.
+     *
+     * @param list The list of {@link Task} objects to save.
      */
     public void save(ArrayList<Task> list) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, false))) {
@@ -89,6 +106,9 @@ public class Save {
         }
     }
 
+    // ==========================
+    // Private helper methods
+    // ==========================
     // Helpers for Save.java, mostly using these for formatting u know
     private Task parseLine(String line) {
         if (!line.isEmpty()) {
@@ -100,6 +120,12 @@ public class Save {
         return null;
     }
 
+    /**
+     * Encodes a {@link Task} into a tab-separated line for saving.
+     *
+     * @param t The task to encode.
+     * @return A TSV-formatted line, or {@code null} if invalid.
+     */
     private String encodeRow(Task t) {
         if (t == null) {
             return null;
@@ -116,23 +142,29 @@ public class Save {
         String done = "X".equals(t.getStatusIcon()) ? "1" : "0";
 
         if (t instanceof Todo) {
-            return "T" + SEP + done + SEP + desc;
+            return "T" + seperator + done + seperator + desc;
         }
         if (t instanceof Deadline d) {
             String by = (d.getBy() == null) ? "" : d.getBy();
-            return "D" + SEP + done + SEP + desc + SEP + by;
+            return "D" + seperator + done + seperator + desc + seperator + by;
         }
         if (t instanceof Event e) {
             String from = (e.getFrom() == null) ? "" : e.getFrom();
             String to = (e.getTo() == null) ? "" : e.getTo();
-            return "E" + SEP + done + SEP + desc + SEP + from + SEP + to;
+            return "E" + seperator + done + seperator + desc + seperator + from + seperator + to;
         }
         return null;
     }
 
+    /**
+     * Parses a TSV-formatted line into a {@link Task} object.
+     *
+     * @param line A TSV-formatted line from the save file.
+     * @return A {@link Task}, or {@code null} if parsing fails.
+     */
     private Task parseTsv(String line) {
         try {
-            String[] p = line.split(SEP, -1);
+            String[] p = line.split(seperator, -1);
             for (int i = 0; i < p.length; i++) {
                 p[i] = p[i].trim();
             }
@@ -152,6 +184,14 @@ public class Save {
         }
     }
 
+    /**
+     * Creates a {@link Task} object from parsed TSV values.
+     *
+     * @param p    The parsed TSV fields.
+     * @param type The task type (T, D, or E).
+     * @param done The done flag ("0" or "1").
+     * @return A {@link Task} object.
+     */
     private static Task getT(String[] p, String type, String done) {
         assert p != null && p.length >= 3 : "TSV array must have at least 3 columns";
         String desc = p[2];
@@ -179,23 +219,40 @@ public class Save {
         return t;
     }
 
-    // ---- small helpers to improve readability ----
-    private static boolean isMetaLine(String line) {
+    /**
+     * Checks if a line is a metadata line (header or footer).
+     *
+     * @param line The line to check.
+     * @return {@code true} if the line is a header/footer, {@code false} otherwise.
+     */
+    private static boolean endingLineCheck(String line) {
         return line.startsWith("Task Type")
                 || line.startsWith("Note to reader:")
                 || line.startsWith("Thank you");
     }
 
+    /**
+     * Writes the header row to the save file.
+     *
+     * @param bw The writer to use.
+     * @throws IOException If an I/O error occurs.
+     */
     private static void writeHeader(BufferedWriter bw) throws IOException {
-        bw.write(HEADER);
+        bw.write(header);
         bw.newLine();
     }
 
+    /**
+     * Writes the footer notes to the save file.
+     *
+     * @param bw The writer to use.
+     * @throws IOException If an I/O error occurs.
+     */
     private static void writeFooter(BufferedWriter bw) throws IOException {
         bw.newLine();
-        bw.write(FOOTER_NOTE);
+        bw.write(footernote);
         bw.newLine();
-        bw.write(FOOTER_THANKS);
+        bw.write(thankyou);
         bw.newLine();
     }
 }

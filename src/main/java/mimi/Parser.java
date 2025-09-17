@@ -10,13 +10,12 @@ package mimi;
 public class Parser {
     // Due to this week's topic on code quality, I had to change the whole
     // structure cause if not we have a lot of magic strings and numbers again haizz
-    // so troublesome...
-    private static final String BY = "/by";
-    private static final String FROM = "/from";
-    private static final String TO = "/to";
-    private static final int BY_LEN = BY.length();
-    private static final int FROM_LEN = FROM.length();
-    private static final int TO_LEN = TO.length();
+    private static final String by = "/by";
+    private static final String from = "/from";
+    private static final String to = "/to";
+    private static final int by_length = by.length();
+    private static final int from_length = from.length();
+    private static final int to_length = to.length();
 
     /** Returns the first word (command) from the input. */
     public static String commandWord(String input) {
@@ -63,12 +62,12 @@ public class Parser {
      * @return {desc, when}
      */
     public static String[] parseDeadline(String rest) throws MiMiException {
-        int pos = rest.indexOf(BY);
+        int pos = rest.indexOf(by);
         if (pos == -1) {
             throw new MiMiException("Use /by for deadlines (e.g., deadline return book /by 2019-10-15)");
         }
         String desc = rest.substring(0, pos).trim();
-        String when = rest.substring(pos + BY_LEN).trim();
+        String when = rest.substring(pos + by_length).trim();
         if (desc.isEmpty() || when.isEmpty()) {
             throw new MiMiException(
                     "Please provide both a description and a deadline, e.g., 'deadline return book /by 2019-10-15'");
@@ -85,16 +84,16 @@ public class Parser {
         String desc = rest;
         String from = "";
         String to = "";
-        int f = rest.indexOf(FROM);
+        int f = rest.indexOf(Parser.from);
         if (f != -1) {
             desc = rest.substring(0, f).trim();
-            String afterFrom = rest.substring(f + FROM_LEN).trim();
-            int t = afterFrom.indexOf(TO);
+            String afterFrom = rest.substring(f + from_length).trim();
+            int t = afterFrom.indexOf(Parser.to);
             if (t == -1) {
                 from = afterFrom.trim();
             } else {
                 from = afterFrom.substring(0, t).trim();
-                to = afterFrom.substring(t + TO_LEN).trim();
+                to = afterFrom.substring(t + to_length).trim();
             }
         }
         if (desc.isEmpty()) {

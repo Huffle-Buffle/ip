@@ -3,8 +3,9 @@ package mimi;
 import java.util.ArrayList;
 
 /**
- * A thin wrapper around an {@code ArrayList<Task>} that provides basic operations used by MiMi.
- * Note: Some programmer assumptions are documented with Java {@code assert} statements.
+ * Represents a list of {@link Task} objects.
+ * Provides basic operations for adding, removing, marking, and searching tasks.
+ * Some programmer assumptions are documented with Java {@code assert} statements.
  * Enable assertions during development with {@code -ea}.
  */
 public record TaskList(ArrayList<Task> tasks) {
@@ -91,9 +92,10 @@ public record TaskList(ArrayList<Task> tasks) {
     }
 
     /**
-     * Case-insensitive substring search over task descriptions.
-     * @param keyword word/phrase to look for (ignored if null/blank)
-     * @return list of matching tasks
+     * Finds all tasks whose descriptions contain the given keyword, ignoring case.
+     *
+     * @param keyword The word or phrase to look for (ignored if null/blank).
+     * @return A list of matching tasks.
      */
     public ArrayList<Task> find(String keyword) {
         ArrayList<Task> result = new ArrayList<>();
