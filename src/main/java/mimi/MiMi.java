@@ -48,6 +48,7 @@ public class MiMi {
     private final UiMasterList ui;
     private final Storage storage;
     private final TaskList tasks;
+    private boolean exit = false;
 
     /**
      * Creates a MiMi chatbot instance and loads saved tasks from disk.
@@ -116,6 +117,83 @@ public class MiMi {
         default -> ui.showError(unknown);
         }
         return false;
+    }
+
+    /** Processes a single user input and returns the result as text (for GUI). */
+    public String handleCommand(String input) {
+        input = nullSafety(input);
+        if (input.isEmpty()) {
+            return "Please type a command so I can help you out! : ";
+        }
+
+        String cmd = Parser.commandWord(input);
+        String args = Parser.afterWord(input);
+
+        try {
+            switch (cmd) {
+            case "bye" -> {
+                exit = true;
+                return "Bye. Hope to see you again soon my friend!";
+            }
+            case "list" -> {
+                return formatList();
+            }
+            case "todo" -> {
+                Todo t = new Todo(Parser.parseTodo(args));
+                add(t);
+                return "Added: " + t;
+            }
+            case "deadline" -> {
+                String[] a = Parser.parseDeadline(args);
+                Deadline d = new Deadline(a[0], a[1]);
+                add(d);
+                return "Added: " + d;
+            }
+            case "event" -> {
+                String[] a = Parser.parseEvent(args);
+                Event ev = new Event(a[0], a[1], a[2]);
+                add(ev);
+                return "Added: " + ev;
+            }
+            case "mark" -> {
+                int idx = Parser.parseIndex(args);
+                Task t = tasks.mark(idx);
+                save();
+                return "Marked as done:\n  " + t;
+            }
+            case "unmark" -> {
+                int idx = Parser.parseIndex(args);
+                Task t = tasks.unmark(idx);
+                save();
+                return "Marked as not done:\n  " + t;
+            }
+            case "delete" -> {
+                int idx = Parser.parseIndex(args);
+                Task removed = tasks.remove(idx);
+                save();
+                return "Removed:\n  " + removed;
+            }
+            case "find" -> {
+                return formatFind(args);
+            }
+            case "within" -> {
+                String[] a = Parser.parseWithin(args);
+                DoWithinPeriodTasks w = new DoWithinPeriodTasks(a[0], a[1], a[2]);
+                tasks.add(w);
+                save();
+                return "Added: " + w;
+            }
+            default -> {
+                return "Alamak what is this? No clue what this is :/";
+            }
+            }
+        } catch (MiMiException e) {
+            return e.getMessage();
+        } catch (IndexOutOfBoundsException e) {
+            return "Please provide a valid task number.";
+        } catch (Exception e) {
+            return "Oopsie something went wrong: " + e.getMessage();
+        }
     }
 
     /**
@@ -248,7 +326,7 @@ public class MiMi {
      * @return A response string from MiMi.
      */
     public String getResponse(String input) {
-        return "MiMi heard: " + input;
+        return handleCommand(input);
     }
 
     /**
@@ -273,5 +351,40 @@ public class MiMi {
     /** Saves the current task list to disk. */
     private void save() {
         storage.save(tasks.asArrayList());
+    }
+
+    private String formatList() {
+        if (tasks.size() == 0) {
+            return "Your list is empty.";
+        }
+        StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            sb.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
+        }
+        return sb.toString();
+    }
+
+    private String formatFind(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return "Please provide a keyword: find <word>";
+        }
+        var matches = tasks.find(keyword);
+        if (matches.isEmpty()) {
+            return "No matching tasks found.";
+        }
+        StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
+        for (int i = 0; i < matches.size(); i++) {
+            sb.append(i + 1).append(". ").append(matches.get(i)).append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String getGreeting() {
+        return "Hello! I'm MiMi your best friend for all things tasks keeping!\nWhat can I do for you?";
+    }
+
+    /** Returns true if the user has typed 'bye' (GUI can use this to close). */
+    public boolean isExit() {
+        return exit;
     }
 }

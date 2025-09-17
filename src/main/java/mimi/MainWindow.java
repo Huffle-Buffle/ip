@@ -36,7 +36,10 @@ public class MainWindow extends AnchorPane {
 
     /** Injects the MiMi instance */
     public void setMiMi(MiMi mi) {
-        mimi = mi;
+        this.mimi = mi;
+        dialogContainer.getChildren().add(
+                DialogBox.getMiMiDialog(mimi.getGreeting(), mimiImage)
+        );
     }
 
     /**
@@ -52,6 +55,9 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getMiMiDialog(response, mimiImage)
         );
         userInput.clear();
+        if (mimi.isExit()) {
+            javafx.application.Platform.exit();
+        }
     }
 }
 
