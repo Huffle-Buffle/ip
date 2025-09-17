@@ -3,7 +3,7 @@
 MiMi is a simple task manager chatbot that helps you keep track of your todos, deadlines and events via a friendly chat-based GUI.
 It stores your tasks on your computer in a txt file so they are saved between sessions.
 Not only that MiMi allows you to mark, unmark and find all aspects of your busy life!
-![MiMi Screenshot](docs/Ui.png)
+![MiMi Screenshot](Ui.png)
 ## Installation
 1. Ensure you have **Java 17 or above** installed on your computer.
 2. Download the latest `MiMi.jar` file from the **Releases** page.
