@@ -13,6 +13,7 @@ Not only that MiMi allows you to mark, unmark and find all aspects of your busy 
 
    ```bash
    java -jar MiMi.jar
+   ```
 
 # Features
 ## 1. Adding To-Dos
@@ -73,7 +74,7 @@ Show all tasks currently stored.
 3. [E][ ] project meeting (from: 2025-09-07 14:00 to: 2025-09-07 16:00)
 ```
 **Explanation of what each symbol stands for**
-- `[T]` = To-do
+- `[T]` = To do
 - `[D]` = Deadline
 - `[E]` = Event
 - `[ ]` = Not done
@@ -126,18 +127,18 @@ Exiting MiMi.
  ```
 
 # Command Summary
-| Command     | Description                     | Format                                   |
-|-------------|---------------------------------|---------------------------------------------|
-| `todo`       | Add a to do task                | `todo TASK_NAME`                            |
-| `deadline`   | Add a deadline task             | `deadline TASK_NAME /by DATE`                |
-| `event`      | Add an event                    | `event EVENT_NAME /from START /to END`       |
-| `within`     | Add a within-period task        | `within TASK_NAME /from START /to END`       |
-| `list`       | List all tasks                  | `list`                                       |
-| `mark`       | Mark a task as done             | `mark INDEX`                                 |
-| `unmark`     | Mark a task as not done         | `unmark INDEX`                               |
-| `delete`     | Delete a task                   | `delete INDEX`                               |
-| `find`       | Find tasks containing a keyword | `find KEYWORD`                        |
-| `bye`         | Exit the program                | `bye`                                        |
+| Command   | Description                     | Format                                 |
+|-----------|---------------------------------|-----------------------------------------|
+| `todo`    | Add a to do task                 | `todo TASK_NAME`                        |
+| `deadline`| Add a deadline task              | `deadline TASK_NAME /by DATE`            |
+| `event`   | Add an event                     | `event EVENT_NAME /from START /to END`   |
+| `within`  | Add a within-period task         | `within TASK_NAME /from START /to END`   |
+| `list`    | List all tasks                   | `list`                                   |
+| `mark`    | Mark a task as done               | `mark INDEX`                            |
+| `unmark`  | Mark a task as not done            | `unmark INDEX`                          |
+| `delete`  | Delete a task                    | `delete INDEX`                          |
+| `find`    | Find tasks containing a keyword  | `find KEYWORD`                          |
+| `bye`     | Exit the program                 | `bye`                                   |
 
 # Data Saving
 - Your tasks are automatically saved to `data/MiMi.txt`
