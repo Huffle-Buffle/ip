@@ -1,16 +1,11 @@
-list
 todo read book
-todo wash car
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2025-10-15
+event project meeting /from 2025-09-07 14:00 /to 2025-09-07 16:00
+within collect cert /from 2025-01-15 /to 2025-01-25
 list
-mark 2
-unmark 2
-event project meeting /from Thurs 10am /to 12pm
-todo do homework
-deadline do homework /by no idea :-p
-mark 3
-mark 6
-mark 4
+mark 1
+unmark 1
+find book
+delete 2
 list
 bye

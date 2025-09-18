@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
- * A task that has a due date/time. Pretty-prints ISO dates for Level-8.
+ * A task that has a due date/time. This was made to fulfill increment Level-8.
  */
 public class Deadline extends Task {
 
@@ -29,7 +29,7 @@ public class Deadline extends Task {
             try {
                 parsed = LocalDate.parse(cleaned, IN);
             } catch (Exception ignored) {
-                // not parseable -> fall back to original string
+                // Nothing happens here so ye :D
             }
         }
         this.date = parsed;
@@ -43,7 +43,7 @@ public class Deadline extends Task {
     /** @return string form like {@code [D][ ] desc (by: Oct 15 2019)} */
     @Override
     public String toString() {
-        String nice = (date != null) ? date.format(OUT) : by;
-        return "[D]" + super.toString() + " (by: " + nice + ")";
+        String deadline = (date != null) ? date.format(OUT) : by;
+        return "[D]" + super.toString() + " (by: " + deadline + ")";
     }
 }

@@ -26,7 +26,7 @@ public class Save {
     /** Tab character used as field separator. */
     private static final String seperator = "\t";
     /** Header row written at the top of the save file. */
-    private static final String header = "Task Type\tDone/Not Done\tDescription";
+    private static final String header = "Task Type\tDone/Not Done\tDescription\tFrom/By\tTo";
     /** Footer note indicating meaning of 0 and 1 values. */
     private static final String footernote = "Note to reader: 1: Done while 0: Not Done";
     /** Footer thank-you message. */
@@ -113,7 +113,7 @@ public class Save {
     private Task parseLine(String line) {
         if (!line.isEmpty()) {
             char c = line.charAt(0);
-            if ((c == 'T' || c == 'D' || c == 'E') && line.indexOf('\t') > 0) {
+            if ((c == 'T' || c == 'D' || c == 'E' || c == 'W') && line.indexOf('\t') > 0) {
                 return parseTsv(line);
             }
         }
@@ -152,6 +152,11 @@ public class Save {
             String from = (e.getFrom() == null) ? "" : e.getFrom();
             String to = (e.getTo() == null) ? "" : e.getTo();
             return "E" + seperator + done + seperator + desc + seperator + from + seperator + to;
+        }
+        if (t instanceof DoWithinPeriodTasks w) {
+            String from = (w.getFrom() == null) ? "" : w.getFrom();
+            String to = (w.getTo() == null) ? "" : w.getTo();
+            return "W" + seperator + done + seperator + desc + seperator + from + seperator + to;
         }
         return null;
     }
@@ -207,6 +212,11 @@ public class Save {
             String from = (p.length >= 4) ? p[3] : "";
             String to = (p.length >= 5) ? p[4] : "";
             t = new Event(desc, from, to);
+        }
+        case "W" -> {
+            String from = (p.length >= 4) ? p[3] : "";
+            String to = (p.length >= 5) ? p[4] : "";
+            t = new DoWithinPeriodTasks(desc, from, to);
         }
         default -> t = new Todo(desc);
         }

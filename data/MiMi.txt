@@ -1,12 +1,9 @@
-Task Type	Done/Not Done	Description
-D	0	return book	2019-10-15
-E	0	project meeting	2024-08-31 1400	2024-08-31 1600
-D	0	visa appointment	2/12/2019 1800
-T	1	go to class
-T	0	homework
-T	1	do my assignment
-T	0	go for cs2103 tutorial
-T	0	go and eat
+Task Type	Done/Not Done	Description	From/By	To
+T	0	go to class
+T	1	do homework
+D	0	return book	2025-10-15
+E	1	project meeting	2025-09-07 14:00	2025-09-07 16:00
+W	0	collect cert	2025-01-15	2025-01-25
 
 Note to reader: 1: Done while 0: Not Done
 Thank you for using MiMi

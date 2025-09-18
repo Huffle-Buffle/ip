@@ -67,7 +67,6 @@ public class MiMi {
      * and displays the result to the user.
      */
     public void run() {
-        ui.sayhi();
         while (true) {
             String input = nullSafety(ui.readCommand());
             if (input.isEmpty()) {
@@ -102,7 +101,6 @@ public class MiMi {
     private boolean commandBook(String cmd, String args) throws MiMiException {
         switch (cmd) {
         case bye -> {
-            ui.byebye();
             return true;
         }
         case list -> showList();

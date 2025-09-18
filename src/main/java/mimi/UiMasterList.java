@@ -11,11 +11,6 @@ public class UiMasterList {
 
     private final Scanner sc = new Scanner(System.in);
 
-    /** Prints the greeting shown when MiMi starts. */
-    public void sayhi() {
-        System.out.println("Hello! I'm MiMi \n What can I do for you?");
-    }
-
     /**
      * Reads the next line from input.
      * @return the line read, or an empty string if none
@@ -27,11 +22,6 @@ public class UiMasterList {
     /** Prints an error message to the console. */
     public void showError(String msg) {
         System.out.println(msg);
-    }
-
-    /** Prints the goodbye shown when MiMi ends. */
-    public void byebye() {
-        System.out.println("Bye. Hope to see you again soon!");
     }
 
     /**

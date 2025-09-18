@@ -43,4 +43,15 @@ public class TaskListTest {
         assertThrows(IndexOutOfBoundsException.class, () -> list.remove(1));
         assertThrows(IndexOutOfBoundsException.class, () -> list.get(-1));
     }
+
+    @Test
+    void find_isCaseInsensitive_andIgnoresBlank() {
+        TaskList list = new TaskList(new ArrayList<>());
+        list.add(new Todo("Read Book"));
+        list.add(new Todo("buy milk"));
+
+        assertEquals(1, list.find("book").size());
+        assertEquals(0, list.find("  ").size());
+    }
+
 }

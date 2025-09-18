@@ -32,4 +32,23 @@ public class ParserTest {
         assertThrows(MiMiException.class, () -> Parser.parseIndex("0"));
         assertThrows(MiMiException.class, () -> Parser.parseIndex("-1"));
     }
+
+    @Test
+    void parseTodo_blank_throws() {
+        assertThrows(MiMiException.class, () -> Parser.parseTodo("   "));
+    }
+
+    @Test
+    void parseEvent_fromOnlyOrFromTo_ok() throws MiMiException {
+        assertArrayEquals(new String[]{"meet", "1400", ""}, Parser.parseEvent("meet /from 1400"));
+        assertArrayEquals(new String[]{"meet", "1400", "1600"}, Parser.parseEvent("meet /from 1400 /to 1600"));
+    }
+
+    @Test
+    void parseWithin_missingFromOrTo_throws() {
+        assertThrows(MiMiException.class, () -> Parser.parseWithin("collect cert /from 2025-01-01"));
+        assertThrows(MiMiException.class, () -> Parser.parseWithin("collect cert /to 2025-01-10"));
+    }
+
+
 }

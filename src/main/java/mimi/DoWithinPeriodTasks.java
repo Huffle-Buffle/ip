@@ -2,6 +2,7 @@ package mimi;
 
 /**
  * A task that must be done within a certain period.
+ * This is the extension
  */
 public class DoWithinPeriodTasks extends Task {
     private final String from;
@@ -17,6 +18,13 @@ public class DoWithinPeriodTasks extends Task {
         super(description);
         this.from = from;
         this.to = to;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+    public String getTo() {
+        return to;
     }
 
     @Override

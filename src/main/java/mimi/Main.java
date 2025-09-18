@@ -13,7 +13,7 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    private MiMi mimi = new MiMi();
+    private final MiMi mimi = new MiMi();
 
     @Override
     public void start(Stage stage) {

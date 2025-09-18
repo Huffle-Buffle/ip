@@ -1,7 +1,32 @@
 Task Type	Done/Not Done	Description
 T	0	homework
-D	0	return book	2019-10-15
-E	0	project meeting	2024-08-31 1400	2024-08-31 1600
+T	1	read book
+T	0	wash car
+D	1	return book	Sunday
+E	0	project meeting	Mon 2pm	4pm
+E	0	project meeting	Thurs 10am	12pm
+T	0	do homework
+D	0	do homework	no idea :-p
+T	0	read book
+T	0	wash car
+D	0	return book	Sunday
+E	0	project meeting	Mon 2pm	4pm
+E	0	project meeting	Thurs 10am	12pm
+T	0	do homework
+D	0	do homework	no idea :-p
+T	0	read book
+T	0	wash car
+D	0	return book	Sunday
+E	0	project meeting	Mon 2pm	4pm
+E	0	project meeting	Thurs 10am	12pm
+T	0	do homework
+D	0	do homework	no idea :-p
+T	0	read book
+D	0	return book	2025-10-15
+E	0	project meeting	2025-09-07 14:00	2025-09-07 16:00
+T	0	read book
+D	0	return book	2025-10-15
+E	0	project meeting	2025-09-07 14:00	2025-09-07 16:00
 
 Note to reader: 1: Done while 0: Not Done
 Thank you for using MiMi
