@@ -1,30 +1,66 @@
-# Duke project template
+# MiMi ☕
 
-This is a project template for a greenfield Java project. It's named after the Java mascot _Duke_. Given below are instructions on how to use it.
+> “Productivity is never an accident. It is always the result of a commitment to excellence, intelligent planning, and focused effort.” – Paul J. Meyer
 
-## Setting up in Intellij
+MiMi is a friendly personal task manager chatbot built in Java.  
+It helps you organize tasks quickly without distraction — now with **cleaner UI, better commands, and a slick JavaFX GUI**!
 
-Prerequisites: JDK 17, update Intellij to the most recent version.
+- 📝 text-based + GUI modes
+- ⚡ fast and responsive
+- 💾 automatic saving and loading
+- ⏳ supports due dates and periods
+- 😺 cute visuals to make tasking fun
 
-1. Open Intellij (if you are not in the welcome screen, click `File` > `Close Project` to close the existing project first)
-1. Open the project into Intellij as follows:
-   1. Click `Open`.
-   1. Select the project directory, and click `OK`.
-   1. If there are any further prompts, accept the defaults.
-1. Configure the project to use **JDK 17** (not other versions) as explained in [here](https://www.jetbrains.com/help/idea/sdk.html#set-up-jdk).<br>
-   In the same dialog, set the **Project language level** field to the `SDK default` option.
-1. After that, locate the `src/main/java/Duke.java` file, right-click it, and choose `Run Duke.main()` (if the code editor is showing compile errors, try restarting the IDE). If the setup is correct, you should see something like the below as the output:
-   ```
-   Hello from
-    ____        _        
-   |  _ \ _   _| | _____ 
-   | | | | | | | |/ / _ \
-   | |_| | |_| |   <  __/
-   |____/ \__,_|_|\_\___|
-   ```
+---
 
-**Warning:** Keep the `src\main\java` folder as the root folder for Java files (i.e., don't rename those folders or move Java files to another folder outside of this folder path), as this is the default location some tools (e.g., Gradle) expect to find Java files.
+## 🚀 How to Use
 
+All you need to do is:
+
+1. download [MiMi here!](https://github.com/Huffle-Buffle/ip/releases/tag/A-Release)
+2. double-click the `.jar`
+3. start adding tasks
+4. let MiMi handle the rest 😸
+
+And yes, it’s still **FREE**!
+
+---
+
+## 🛠 Improvements Made
+
+- Added `within` command for tasks within a date range
+- Persistent task storage in `data/MiMi.txt`
+- Integrated **JUnit tests** for Parser and TaskList
+- Refactored into OOP classes: `MiMi`, `UiMasterList`, `Parser`, `Storage`, `TaskList`, `Todo`, `Deadline`, `Event`
+- Added **JavaDoc comments** to public classes and methods
+- Implemented **JavaFX GUI** with `Main`, `MainWindow`, and `DialogBox`
+- Gave MiMi a personality
+
+---
+
+## ✨ Features
+
+- Manage `todo`, `deadline`, `event`, and `within` tasks
+- Search tasks with keywords (`find`)
+- Mark tasks as done or undone
+- Delete tasks easily
+- Save/load tasks automatically from a file
+- Friendly GUI interface with chat bubbles and images 🐱☕
+
+---
+
+## 💻 For Developers
+
+If you're a Java programmer, MiMi is a great practice project.  
+Here’s the entry point:
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Application.launch(Main.class, args);
+    }
+}
+```
 ## AI Usage Declaration! 
 ### Date: 29 August 2025
 I(Megane Wong) used ChatGPT 5 to mostly assist with generating the Javadoc comments, commit messages from Level-7 up to A-Gradle were generated but now are all self written to meet the Git Standard.
@@ -34,3 +70,7 @@ Lastly, I used it to assist me in correcting my mistakes as I was having some is
 ### Date: 11 September 2025
 As of today I have used GPT to help me check for where to improve the code quality as per this week's task as the topics for this week were so much that I had no idea where to even begin for the code 
 quality hunt. Based on what it has suggested, I edited most of my magic strings and tried my best for the other areas, might have maybe missed a few. Other than that nothing really much else.
+
+### Date: 17 September 2025
+As per the previous weeks, mostly used GPT 5 to make the Javadoc comments for me. It also generated 2 more test cases for me in each of the unit tests. 
+Also, it gave me some quality suggestions but that's pretty much it.
