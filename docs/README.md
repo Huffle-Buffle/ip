@@ -72,6 +72,7 @@ Show all tasks currently stored.
 1. [T][ ] buy groceries
 2. [D][ ] submit report (by: 2025-09-10)
 3. [E][ ] project meeting (from: 2025-09-07 14:00 to: 2025-09-07 16:00)
+4, [W][ ] collect cert (from: 2025-09-01 14:00 to: 2025-09-07 16:00)
 ```
 **Explanation of what each symbol stands for**
 - `[T]` = To do
